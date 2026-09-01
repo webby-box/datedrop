@@ -15,7 +15,7 @@ export type BoardPlaceStatus = "want" | "planned" | "booked" | "skipped";
 export type BookingPlatform = "resy" | "opentable" | "tock" | "sevenrooms" | "website" | "unknown";
 export type ClimateVerdict = "go" | "caution" | "skip";
 export type PlacesProvider = "geoapify" | "locationiq" | "nominatim" | "google" | "mock";
-export type LlmProvider = "gemini" | "groq" | "auto";
+export type LlmProvider = "gemini" | "groq" | "openrouter" | "auto";
 
 /** Normalized place from any geocoder / places adapter. */
 export type NormalizedPlace = {

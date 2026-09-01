@@ -2,6 +2,9 @@ import type { Candidate, Extraction, LlmProvider, SourceHint } from "./types";
 
 const GEMINI_MODEL = "gemini-2.5-flash";
 const GROQ_VISION_MODEL = process.env.GROQ_VISION_MODEL || "qwen/qwen3.6-27b";
+const OPENROUTER_VISION_MODEL =
+  process.env.OPENROUTER_VISION_MODEL || "google/gemma-4-31b-it:free";
+const OPENROUTER_FALLBACK_MODEL = "openrouter/free";
 
 const SYSTEM = `You extract places from screenshots for DateDrop.
 DateDrop is ReciMe-for-places: people drop screenshots of restaurants and trips.
@@ -61,12 +64,19 @@ function parseJson(text: string): Extraction {
 
 export function resolveLlmProvider(): LlmProvider {
   const forced = (process.env.LLM_PROVIDER || "auto").toLowerCase().trim();
-  if (forced === "gemini" || forced === "groq" || forced === "auto") return forced;
+  if (forced === "gemini" || forced === "groq" || forced === "openrouter" || forced === "auto") {
+    return forced;
+  }
   return "auto";
 }
 
 export function llmConfigured(): boolean {
-  return Boolean(process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY || process.env.MOCK_AI === "1");
+  return Boolean(
+    process.env.GEMINI_API_KEY ||
+      process.env.GROQ_API_KEY ||
+      process.env.OPENROUTER_API_KEY ||
+      process.env.MOCK_AI === "1",
+  );
 }
 
 async function extractWithGemini(images: { mime: string; bytes: Buffer }[]): Promise<Extraction> {
@@ -142,6 +152,81 @@ async function extractWithGroq(images: { mime: string; bytes: Buffer }[]): Promi
   return parseJson(text);
 }
 
+async function openRouterChat(
+  key: string,
+  model: string,
+  content: Array<
+    | { type: "text"; text: string }
+    | { type: "image_url"; image_url: { url: string } }
+  >,
+  temperature: number,
+  jsonMode: boolean,
+): Promise<string> {
+  const body: Record<string, unknown> = {
+    model,
+    temperature,
+    messages: [{ role: "user", content }],
+  };
+  if (jsonMode) {
+    body.response_format = { type: "json_object" };
+  }
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": process.env.AUTH_URL || "https://datedrop.app",
+      "X-Title": "DateDrop",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const errBody = await res.text();
+    throw new Error(`OpenRouter failed (${res.status}, model=${model}): ${errBody.slice(0, 300)}`);
+  }
+  const json = (await res.json()) as {
+    choices?: { message?: { content?: string } }[];
+  };
+  return json.choices?.[0]?.message?.content || "";
+}
+
+async function extractWithOpenRouter(
+  images: { mime: string; bytes: Buffer }[],
+): Promise<Extraction> {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) throw new Error("OPENROUTER_API_KEY is not set.");
+  const content: Array<
+    | { type: "text"; text: string }
+    | { type: "image_url"; image_url: { url: string } }
+  > = [
+    {
+      type: "text",
+      text:
+        SYSTEM +
+        "\n\nExtract every distinct place visible in these screenshots. Maps chrome (pin, Directions, Save, rating row, bottom sheet) is a strong cue. Respond with JSON only.",
+    },
+    ...images.map((img) => ({
+      type: "image_url" as const,
+      image_url: {
+        url: `data:${img.mime};base64,${img.bytes.toString("base64")}`,
+      },
+    })),
+  ];
+  const models = [OPENROUTER_VISION_MODEL, OPENROUTER_FALLBACK_MODEL].filter(
+    (m, i, arr) => arr.indexOf(m) === i,
+  );
+  const errors: string[] = [];
+  for (const model of models) {
+    try {
+      const text = await openRouterChat(key, model, content, 0.2, true);
+      return parseJson(text);
+    } catch (err) {
+      errors.push((err as Error).message);
+    }
+  }
+  throw new Error(errors.join(" | "));
+}
+
 export async function extractFromImages(
   images: { mime: string; bytes: Buffer }[],
 ): Promise<Extraction> {
@@ -149,35 +234,69 @@ export async function extractFromImages(
   const mode = resolveLlmProvider();
   const errors: string[] = [];
 
-  const tryGemini = mode === "gemini" || mode === "auto";
-  const tryGroq = mode === "groq" || mode === "auto";
+  // auto order: groq → openrouter → gemini (prefer working free keys; gemini may be invalid)
+  const order: Array<"groq" | "openrouter" | "gemini"> =
+    mode === "auto"
+      ? ["groq", "openrouter", "gemini"]
+      : mode === "groq"
+        ? ["groq"]
+        : mode === "openrouter"
+          ? ["openrouter"]
+          : ["gemini"];
 
-  if (tryGemini && process.env.GEMINI_API_KEY) {
-    try {
-      return await extractWithGemini(images);
-    } catch (err) {
-      errors.push(`Gemini: ${(err as Error).message}`);
-      if (mode === "gemini") throw err;
+  for (const provider of order) {
+    if (provider === "groq") {
+      if (!process.env.GROQ_API_KEY) {
+        if (mode === "groq") {
+          throw new Error(
+            "GROQ_API_KEY is not set. Add it to .env.local or set LLM_PROVIDER=openrouter|gemini.",
+          );
+        }
+        continue;
+      }
+      try {
+        return await extractWithGroq(images);
+      } catch (err) {
+        errors.push(`Groq: ${(err as Error).message}`);
+        if (mode === "groq") throw err;
+      }
+    } else if (provider === "openrouter") {
+      if (!process.env.OPENROUTER_API_KEY) {
+        if (mode === "openrouter") {
+          throw new Error(
+            "OPENROUTER_API_KEY is not set. Add it to .env.local or set LLM_PROVIDER=groq|gemini.",
+          );
+        }
+        continue;
+      }
+      try {
+        return await extractWithOpenRouter(images);
+      } catch (err) {
+        errors.push(`OpenRouter: ${(err as Error).message}`);
+        if (mode === "openrouter") throw err;
+      }
+    } else if (provider === "gemini") {
+      if (!process.env.GEMINI_API_KEY) {
+        if (mode === "gemini") {
+          throw new Error(
+            "GEMINI_API_KEY is not set. Add it to .env.local or set LLM_PROVIDER=groq|openrouter.",
+          );
+        }
+        continue;
+      }
+      try {
+        return await extractWithGemini(images);
+      } catch (err) {
+        errors.push(`Gemini: ${(err as Error).message}`);
+        if (mode === "gemini") throw err;
+      }
     }
-  } else if (mode === "gemini") {
-    throw new Error("GEMINI_API_KEY is not set. Add it to .env.local or set LLM_PROVIDER=groq.");
-  }
-
-  if (tryGroq && process.env.GROQ_API_KEY) {
-    try {
-      return await extractWithGroq(images);
-    } catch (err) {
-      errors.push(`Groq: ${(err as Error).message}`);
-      if (mode === "groq") throw err;
-    }
-  } else if (mode === "groq") {
-    throw new Error("GROQ_API_KEY is not set. Add it to .env.local or set LLM_PROVIDER=gemini.");
   }
 
   throw new Error(
     errors.length
       ? `Vision LLM failed. ${errors.join(" | ")}`
-      : "No vision LLM configured. Set GEMINI_API_KEY or GROQ_API_KEY.",
+      : "No vision LLM configured. Set GROQ_API_KEY, OPENROUTER_API_KEY, or GEMINI_API_KEY.",
   );
 }
 
@@ -224,16 +343,53 @@ async function groqText(prompt: string): Promise<string | null> {
   }
 }
 
+async function openRouterText(prompt: string): Promise<string | null> {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) return null;
+  const models = [OPENROUTER_VISION_MODEL, OPENROUTER_FALLBACK_MODEL].filter(
+    (m, i, arr) => arr.indexOf(m) === i,
+  );
+  for (const model of models) {
+    try {
+      const text = await openRouterChat(
+        key,
+        model,
+        [{ type: "text", text: prompt }],
+        0.4,
+        false,
+      );
+      const trimmed = text.trim();
+      if (trimmed) return trimmed;
+    } catch {
+      // try next model
+    }
+  }
+  return null;
+}
+
 async function proseWithFallback(prompt: string, fallback: string): Promise<string> {
   if (process.env.MOCK_AI === "1") return fallback;
   const mode = resolveLlmProvider();
-  if (mode === "gemini" || mode === "auto") {
-    const g = await geminiText(prompt);
-    if (g) return g;
-  }
-  if (mode === "groq" || mode === "auto") {
-    const q = await groqText(prompt);
-    if (q) return q;
+  const order: Array<"groq" | "openrouter" | "gemini"> =
+    mode === "auto"
+      ? ["groq", "openrouter", "gemini"]
+      : mode === "groq"
+        ? ["groq"]
+        : mode === "openrouter"
+          ? ["openrouter"]
+          : ["gemini"];
+
+  for (const provider of order) {
+    if (provider === "groq") {
+      const q = await groqText(prompt);
+      if (q) return q;
+    } else if (provider === "openrouter") {
+      const o = await openRouterText(prompt);
+      if (o) return o;
+    } else if (provider === "gemini") {
+      const g = await geminiText(prompt);
+      if (g) return g;
+    }
   }
   return fallback;
 }

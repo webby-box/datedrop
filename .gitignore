@@ -16,3 +16,8 @@ test-results
 playwright-report
 blob-report
 playwright/.cache
+
+.open-next
+.wrangler
+.dev.vars
+cloudflare-env.d.ts

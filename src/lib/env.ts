@@ -7,6 +7,7 @@ export type EnvStatus = {
   maps: boolean;
   gemini: boolean;
   groq: boolean;
+  openrouter: boolean;
   llm: boolean;
   llmProvider: string;
   missing: string[];
@@ -28,7 +29,9 @@ function placesProvider(): string {
 
 function llmProvider(): string {
   const forced = (process.env.LLM_PROVIDER || "auto").toLowerCase().trim();
-  if (forced === "gemini" || forced === "groq" || forced === "auto") return forced;
+  if (forced === "gemini" || forced === "groq" || forced === "openrouter" || forced === "auto") {
+    return forced;
+  }
   return "auto";
 }
 
@@ -49,7 +52,8 @@ export function getEnvStatus(): EnvStatus {
   const maps = true;
   const gemini = Boolean(process.env.GEMINI_API_KEY);
   const groq = Boolean(process.env.GROQ_API_KEY);
-  const llm = gemini || groq || process.env.MOCK_AI === "1";
+  const openrouter = Boolean(process.env.OPENROUTER_API_KEY);
+  const llm = gemini || groq || openrouter || process.env.MOCK_AI === "1";
   const missing: string[] = [];
   const optional: string[] = [];
   if (!mongo) missing.push("MONGODB_URI");
@@ -61,7 +65,8 @@ export function getEnvStatus(): EnvStatus {
   if (!process.env.LOCATIONIQ_API_KEY) optional.push("LOCATIONIQ_API_KEY");
   if (!gemini) optional.push("GEMINI_API_KEY");
   if (!groq) optional.push("GROQ_API_KEY");
-  if (!llm) missing.push("GEMINI_API_KEY|GROQ_API_KEY");
+  if (!openrouter) optional.push("OPENROUTER_API_KEY");
+  if (!llm) missing.push("GROQ_API_KEY|OPENROUTER_API_KEY|GEMINI_API_KEY");
   if (!process.env.GOOGLE_PLACES_API_KEY) optional.push("GOOGLE_PLACES_API_KEY");
   if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) optional.push("NEXT_PUBLIC_GOOGLE_MAPS_API_KEY");
   return {
@@ -73,6 +78,7 @@ export function getEnvStatus(): EnvStatus {
     maps,
     gemini,
     groq,
+    openrouter,
     llm,
     llmProvider: llmProvider(),
     missing,

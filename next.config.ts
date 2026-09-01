@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["mongodb", "sharp"],
@@ -12,3 +13,6 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// Enables CF bindings during `next dev`. Safe for standard `next build` / Node start.
+initOpenNextCloudflareForDev();
