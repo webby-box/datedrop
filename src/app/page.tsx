@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
-import { clerkConfigured } from "@/lib/env";
+import { googleAuthConfigured } from "@/lib/env";
 
 const STEPS = [
   { n: "01", title: "Drop", body: "Screenshots of Maps pins, IG stories, Resy screens, postcards — or paste a Maps URL." },
@@ -15,10 +15,10 @@ const EXAMPLES = [
 ];
 
 export default function LandingPage() {
-  const href = clerkConfigured() ? "/sign-in" : "/inbox";
+  const href = googleAuthConfigured() ? "/sign-in" : "/inbox";
   return (
     <div className="min-h-screen">
-      <SiteHeader />
+      <SiteHeader authReady={googleAuthConfigured()} />
       <main className="mx-auto max-w-6xl px-5 pb-24">
         <section className="grid gap-12 py-16 md:grid-cols-[1.2fr_0.8fr] md:py-24">
           <div>

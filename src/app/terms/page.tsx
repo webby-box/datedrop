@@ -1,9 +1,10 @@
 import { SiteHeader } from "@/components/site-header";
+import { googleAuthConfigured } from "@/lib/env";
 
 export default function TermsPage() {
   return (
     <div className="min-h-screen">
-      <SiteHeader />
+      <SiteHeader authReady={googleAuthConfigured()} />
       <article className="mx-auto max-w-2xl px-5 py-16 text-[#cfc3ae]">
         <p className="kicker">Legal</p>
         <h1 className="serif mt-3 text-5xl text-[#f4ead5]">Terms</h1>

@@ -1,9 +1,10 @@
 import { SiteHeader } from "@/components/site-header";
+import { googleAuthConfigured } from "@/lib/env";
 
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen">
-      <SiteHeader />
+      <SiteHeader authReady={googleAuthConfigured()} />
       <article className="mx-auto max-w-2xl px-5 py-16 text-[#cfc3ae]">
         <p className="kicker">Legal</p>
         <h1 className="serif mt-3 text-5xl text-[#f4ead5]">Privacy</h1>
@@ -35,8 +36,8 @@ export default function PrivacyPage() {
         </p>
         <h2 className="serif mt-10 text-2xl text-[#f4ead5]">Account</h2>
         <p className="mt-3">
-          Sign-in is handled by Clerk (email and Google). We store your Clerk user id and email so
-          boards stay yours. Rate limit: 20 captures per hour.
+          Sign-in is handled by Google Sign-In (Auth.js). We store your Google user id (sub) and
+          email so boards stay yours. Rate limit: 20 captures per hour.
         </p>
       </article>
     </div>

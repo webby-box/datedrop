@@ -1,12 +1,13 @@
 import { SiteHeader } from "@/components/site-header";
-import { clerkConfigured } from "@/lib/env";
+import { googleAuthConfigured } from "@/lib/env";
 import { AuthScreens } from "@/components/auth-screens";
 
 export default function SignInPage() {
+  const ready = googleAuthConfigured();
   return (
     <div className="min-h-screen">
-      <SiteHeader />
-      <AuthScreens mode="sign-in" ready={clerkConfigured()} />
+      <SiteHeader authReady={ready} />
+      <AuthScreens ready={ready} />
     </div>
   );
 }

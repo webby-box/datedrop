@@ -12,7 +12,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
     }
     const { id } = await ctx.params;
     if (!ObjectId.isValid(id)) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    const rec = await (await captures()).findOne({ _id: new ObjectId(id), userId: user.clerkId });
+    const rec = await (await captures()).findOne({ _id: new ObjectId(id), userId: user.userId });
     if (!rec) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json({ capture: { ...rec, _id: rec._id?.toString() } });
   } catch (err) {

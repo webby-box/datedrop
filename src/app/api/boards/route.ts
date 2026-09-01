@@ -9,7 +9,7 @@ export async function GET() {
     if (!mongoConfigured()) {
       return NextResponse.json({ boards: [], warning: "MONGODB_URI is not set." });
     }
-    const list = await (await boards()).find({ userId: user.clerkId }).sort({ updatedAt: -1 }).toArray();
+    const list = await (await boards()).find({ userId: user.userId }).sort({ updatedAt: -1 }).toArray();
     const bp = await boardPlaces();
     const pl = await places();
     const out = [];

@@ -26,7 +26,7 @@ test.describe("DateDrop happy path", () => {
     await expect(page.getByText(/api.resy.com/)).toBeVisible();
   });
 
-  test("sign-in shows Clerk setup when keys are missing", async ({ page }) => {
+  test("sign-in shows Google auth setup when keys are missing", async ({ page }) => {
     await page.goto("/sign-in");
     await expect(page.getByText(/Auth keys are not set|Sign in/i)).toBeVisible();
   });

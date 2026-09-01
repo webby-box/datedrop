@@ -26,7 +26,7 @@ export async function GET() {
     }
     const col = await captures();
     const rows = await col
-      .find({ userId: user.clerkId })
+      .find({ userId: user.userId })
       .sort({ createdAt: -1 })
       .limit(50)
       .toArray();
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       );
     }
     await ensureIndexes();
-    await assertCaptureRate(user.clerkId);
+    await assertCaptureRate(user.userId);
 
     const form = await req.formData();
     const pastedUrl = String(form.get("url") || "").trim();
@@ -89,7 +89,7 @@ export async function POST(req: Request) {
     const col = await captures();
     const now = new Date();
     const result = await col.insertOne({
-      userId: user.clerkId,
+      userId: user.userId,
       status: "processing",
       blobUrls,
       source,

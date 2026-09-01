@@ -15,7 +15,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       return NextResponse.json({ error: "MONGODB_URI is not set." }, { status: 503 });
     }
     const { id } = await ctx.params;
-    const plan = await (await plans()).findOne({ boardId: id, userId: user.clerkId });
+    const plan = await (await plans()).findOne({ boardId: id, userId: user.userId });
     return NextResponse.json({ plan: plan ? { ...plan, _id: plan._id?.toString() } : null });
   } catch (err) {
     const e = err as Error & { status?: number };
@@ -30,7 +30,7 @@ export async function POST(_req: Request, ctx: { params: Promise<{ id: string }>
       return NextResponse.json({ error: "MONGODB_URI is not set." }, { status: 503 });
     }
     const { id } = await ctx.params;
-    const board = await (await boards()).findOne({ _id: new ObjectId(id), userId: user.clerkId });
+    const board = await (await boards()).findOne({ _id: new ObjectId(id), userId: user.userId });
     if (!board) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const start = board.startDate || new Date().toISOString().slice(0, 10);
     const end = board.endDate || start;
@@ -106,7 +106,7 @@ export async function POST(_req: Request, ctx: { params: Promise<{ id: string }>
 
     const record = {
       boardId: id,
-      userId: user.clerkId,
+      userId: user.userId,
       dates: { start, end },
       partySize: board.partySize || 2,
       seasonality,
@@ -117,7 +117,7 @@ export async function POST(_req: Request, ctx: { params: Promise<{ id: string }>
     };
 
     await (await plans()).updateOne(
-      { boardId: id, userId: user.clerkId },
+      { boardId: id, userId: user.userId },
       { $set: record },
       { upsert: true },
     );

@@ -1,9 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { clerkMiddleware } from "@clerk/nextjs/server";
-
-const clerkReady = Boolean(
-  process.env.CLERK_SECRET_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-);
+import { auth } from "@/auth";
+import { googleAuthConfigured } from "@/lib/env";
 
 const PREFIXES = [
   "/inbox",
@@ -21,13 +18,19 @@ function isProtected(pathname: string) {
   return PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
-const clerk = clerkMiddleware(async (auth, req) => {
-  if (isProtected(req.nextUrl.pathname)) await auth.protect();
+const withAuth = auth((req) => {
+  if (isProtected(req.nextUrl.pathname) && !req.auth) {
+    const signIn = new URL("/sign-in", req.nextUrl.origin);
+    signIn.searchParams.set("callbackUrl", req.nextUrl.pathname);
+    return NextResponse.redirect(signIn);
+  }
+  return NextResponse.next();
 });
 
 export default function proxy(req: NextRequest, evt: unknown) {
-  if (!clerkReady) return NextResponse.next();
-  return clerk(req, evt as never);
+  // Demo-local mode: Google OAuth env missing → allow through.
+  if (!googleAuthConfigured()) return NextResponse.next();
+  return withAuth(req, evt as never);
 }
 
 export const config = {

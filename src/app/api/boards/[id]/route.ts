@@ -12,7 +12,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       return NextResponse.json({ error: "MONGODB_URI is not set." }, { status: 503 });
     }
     const { id } = await ctx.params;
-    const board = await (await boards()).findOne({ _id: new ObjectId(id), userId: user.clerkId });
+    const board = await (await boards()).findOne({ _id: new ObjectId(id), userId: user.userId });
     if (!board) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const links = await (await boardPlaces()).find({ boardId: id }).toArray();
     const saved = await (await places())
@@ -52,7 +52,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     };
     const col = await boards();
     await col.updateOne(
-      { _id: new ObjectId(id), userId: user.clerkId },
+      { _id: new ObjectId(id), userId: user.userId },
       {
         $set: {
           ...(body.startDate !== undefined ? { startDate: body.startDate } : {}),

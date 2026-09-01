@@ -21,11 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const pk = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
   return (
     <html lang="en">
       <body className={`${outfit.variable} ${serif.variable} antialiased`}>
-        <Providers publishableKey={pk}>{children}</Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

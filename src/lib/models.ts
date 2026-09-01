@@ -12,7 +12,7 @@ import type {
 
 export type UserRecord = {
   _id?: ObjectId;
-  clerkId: string;
+  userId: string;
   email?: string;
   createdAt: Date;
 };

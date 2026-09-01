@@ -1,25 +1,13 @@
 "use client";
 
-import { ClerkProvider } from "@clerk/nextjs";
+import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
 
-export function Providers({
-  children,
-  publishableKey,
-}: {
-  children: React.ReactNode;
-  publishableKey?: string;
-}) {
-  const inner = (
-    <>
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <SessionProvider>
       {children}
       <Toaster theme="dark" richColors />
-    </>
-  );
-  if (!publishableKey) return inner;
-  return (
-    <ClerkProvider publishableKey={publishableKey} afterSignOutUrl="/">
-      {inner}
-    </ClerkProvider>
+    </SessionProvider>
   );
 }

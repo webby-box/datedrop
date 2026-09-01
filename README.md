@@ -39,12 +39,14 @@ We identify the place and open the booking site. We don't have live table invent
 
 Copy .env.example to .env.local. Install dependencies, then run the Next.js dev server (see package.json scripts: dev, build, start, test:e2e).
 
-The app still boots if keys are missing; each feature returns a readable error or a setup message.
+The app still boots if keys are missing; each feature returns a readable error or a setup message. When Google OAuth env is missing, auth falls back to demo-local mode.
 
 ### Environment
 
 - MONGODB_URI — persistence. Database name is always datedrop. Client is cached on globalThis.
-- CLERK_SECRET_KEY and NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY — email + Google. Auth routes show a setup message if missing.
+- AUTH_SECRET — Auth.js session secret. Generate with `openssl rand -base64 32`.
+- AUTH_GOOGLE_ID and AUTH_GOOGLE_SECRET — Google OAuth Web Client ID and secret. Auth routes show a setup message if missing; the app still boots in demo-local mode.
+- AUTH_URL — optional, e.g. `http://localhost:3000`.
 - BLOB_READ_WRITE_TOKEN — private screenshots. Falls back to public/uploads with a warning.
 - GOOGLE_PLACES_API_KEY — Places API (New) Text Search, Details, Nearby. Field masks. Store place_id forever. Refetch details older than 7 days.
 - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — map pins. Attribution required.
@@ -74,5 +76,6 @@ CI mocks Gemini and Places via MOCK_AI=1 and MOCK_PLACES=1.
 - /places/[id] details + book CTA
 - /settings account + delete my data
 - /privacy and /terms
+- /sign-in Continue with Google (Auth.js)
 
 Repo: https://github.com/webby-box/datedrop

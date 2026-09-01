@@ -15,8 +15,9 @@ export function DeleteData() {
     <div className="mt-12 border-t border-[rgba(244,234,213,0.08)] pt-8">
       <h2 className="serif text-2xl">Delete my data</h2>
       <p className="mt-2 text-sm text-[#9a8f7e]">
-        Removes captures, boards, board places, plans, and your DateDrop user row. Clerk&apos;s
-        account (if configured) is separate — delete that in Clerk if you want the identity gone too.
+        Removes captures, boards, board places, plans, and your DateDrop user row. Your Google
+        account is separate — revoke DateDrop access in your Google account settings if you want
+        the OAuth grant gone too.
       </p>
       <Button variant="outline" className="mt-4" onClick={() => void run()}>
         Delete my data

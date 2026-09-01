@@ -33,7 +33,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     };
 
     const capCol = await captures();
-    const rec = await capCol.findOne({ _id: new ObjectId(id), userId: user.clerkId });
+    const rec = await capCol.findOne({ _id: new ObjectId(id), userId: user.userId });
     if (!rec) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     if (body.action === "skip" || body.action === "not_a_place") {
@@ -73,11 +73,11 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     const city = cityFromAddress(place.formattedAddress, rec.extraction?.candidates[0]?.city);
     const country = countryFromAddress(place.formattedAddress);
     const boardCol = await boards();
-    let board = await boardCol.findOne({ userId: user.clerkId, city });
+    let board = await boardCol.findOne({ userId: user.userId, city });
     if (!board) {
       const now = new Date();
       const inserted = await boardCol.insertOne({
-        userId: user.clerkId,
+        userId: user.userId,
         title: city,
         city,
         country,
@@ -96,7 +96,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       {
         $setOnInsert: {
           boardId: board!._id!.toString(),
-          userId: user.clerkId,
+          userId: user.userId,
           placeId: place.googlePlaceId,
           captureId: id,
           sourceScreenshotUrl: rec.blobUrls[0],

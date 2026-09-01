@@ -15,7 +15,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     const place = await (await places()).findOne({ googlePlaceId: id });
     if (!place) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const shots = await (await boardPlaces())
-      .find({ userId: user.clerkId, placeId: id })
+      .find({ userId: user.userId, placeId: id })
       .toArray();
     let similar: Awaited<ReturnType<typeof nearbyRestaurants>> = [];
     try {

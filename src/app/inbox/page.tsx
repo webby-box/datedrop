@@ -1,16 +1,15 @@
 import { SiteHeader } from "@/components/site-header";
 import { InboxClient } from "@/components/inbox-client";
-import { clerkConfigured } from "@/lib/env";
-import { getEnvStatus } from "@/lib/env";
+import { getEnvStatus, googleAuthConfigured } from "@/lib/env";
 
 export default function InboxPage() {
   const env = getEnvStatus();
   return (
     <div className="min-h-screen">
-      <SiteHeader signedIn />
-      {!clerkConfigured() && (
+      <SiteHeader signedIn authReady={googleAuthConfigured()} />
+      {!googleAuthConfigured() && (
         <div className="border-b border-[rgba(212,165,116,0.25)] bg-[#1a1712] px-5 py-3 text-sm text-[#d4a574]">
-          Clerk keys missing — demo mode. Auth screens explain how to wire email + Google.
+          Google OAuth keys missing — demo mode. Auth screens explain how to wire Google Sign-In.
         </div>
       )}
       {env.missing.length > 0 && (

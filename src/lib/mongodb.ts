@@ -35,7 +35,7 @@ export async function getDb(): Promise<Db> {
 export async function ensureIndexes() {
   const db = await getDb();
   await Promise.all([
-    db.collection("users").createIndex({ clerkId: 1 }, { unique: true }),
+    db.collection("users").createIndex({ userId: 1 }, { unique: true }),
     db.collection("places").createIndex({ googlePlaceId: 1 }, { unique: true }),
     db.collection("captures").createIndex({ userId: 1, createdAt: -1 }),
     db.collection("boards").createIndex({ userId: 1, city: 1 }),

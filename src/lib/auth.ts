@@ -1,34 +1,37 @@
-import { clerkConfigured } from "./env";
+import { googleAuthConfigured } from "./env";
+import { mongoConfigured } from "./mongodb";
 import { users } from "./models";
 
 export type AppUser = {
-  clerkId: string;
+  userId: string;
   email?: string;
   demo: boolean;
 };
 
 export async function currentUserSafe(): Promise<AppUser | null> {
-  if (!clerkConfigured()) {
-    return { clerkId: "demo-local", email: "demo@datedrop.local", demo: true };
+  if (!googleAuthConfigured()) {
+    return { userId: "demo-local", email: "demo@datedrop.local", demo: true };
   }
   try {
-    const { auth, currentUser } = await import("@clerk/nextjs/server");
-    const { userId } = await auth();
+    const { auth } = await import("@/auth");
+    const session = await auth();
+    const userId = session?.user?.id;
     if (!userId) return null;
-    const u = await currentUser();
-    const email = u?.emailAddresses?.[0]?.emailAddress;
-    const col = await users();
-    await col.updateOne(
-      { clerkId: userId },
-      {
-        $setOnInsert: { clerkId: userId, createdAt: new Date() },
-        $set: { email },
-      },
-      { upsert: true },
-    );
-    return { clerkId: userId, email, demo: false };
+    const email = session.user?.email ?? undefined;
+    if (mongoConfigured()) {
+      const col = await users();
+      await col.updateOne(
+        { userId },
+        {
+          $setOnInsert: { userId, createdAt: new Date() },
+          $set: { email },
+        },
+        { upsert: true },
+      );
+    }
+    return { userId, email, demo: false };
   } catch (err) {
-    console.error("Clerk auth failed", err);
+    console.error("Google auth failed", err);
     return null;
   }
 }

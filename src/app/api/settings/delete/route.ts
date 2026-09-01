@@ -9,13 +9,13 @@ export async function POST() {
       return NextResponse.json({ ok: true, note: "No database configured — nothing to delete." });
     }
     const db = await getDb();
-    const uid = user.clerkId;
+    const uid = user.userId;
     await Promise.all([
       db.collection("captures").deleteMany({ userId: uid }),
       db.collection("boards").deleteMany({ userId: uid }),
       db.collection("boardPlaces").deleteMany({ userId: uid }),
       db.collection("plans").deleteMany({ userId: uid }),
-      db.collection("users").deleteMany({ clerkId: uid }),
+      db.collection("users").deleteMany({ userId: uid }),
       db.collection("rateLimits").deleteMany({ key: `capture:${uid}` }),
     ]);
     return NextResponse.json({ ok: true });
