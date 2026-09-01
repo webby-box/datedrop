@@ -9,14 +9,14 @@ export default function TermsPage() {
         <p className="kicker">Legal</p>
         <h1 className="serif mt-3 text-5xl text-[#f4ead5]">Terms</h1>
         <p className="mt-8">
-          DateDrop helps you turn screenshots into confirmed Google Places and then into a date
-          plan. It is not a travel super-app, not a booking engine, and not a table-sniping tool.
+          DateDrop helps you turn screenshots into confirmed places and then into a date plan. It
+          is not a travel super-app, not a booking engine, and not a table-sniping tool.
         </p>
         <h2 className="serif mt-10 text-2xl text-[#f4ead5]">What we do</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5">
           <li>Read screenshots you upload (Maps, social overlays, booking app screens, postcards).</li>
           <li>Parse public Maps and venue URLs you paste. We do not fetch live slot grids.</li>
-          <li>Ask you to confirm a Google Place match before anything is saved.</li>
+          <li>Ask you to confirm a place match before anything is saved.</li>
           <li>Group saved places on a board by city and generate an itinerary from your places.</li>
           <li>Hand you outbound booking links. You book on the provider site.</li>
         </ul>
@@ -30,8 +30,10 @@ export default function TermsPage() {
         </ul>
         <h2 className="serif mt-10 text-2xl text-[#f4ead5]">Attribution</h2>
         <p className="mt-3">
-          Place data and maps: Google Maps Platform. Climate normals: Open-Meteo archive 1991–2020.
-          Vision: Gemini 2.5 Flash. Use of those services is subject to their own terms.
+          Place data: OpenStreetMap via Geoapify, LocationIQ, or Nominatim (Google Places optional).
+          Maps: MapLibre GL + OpenFreeMap tiles. Climate normals: Open-Meteo archive 1991–2020.
+          Vision: Gemini 2.5 Flash or Groq vision. Use of those services is subject to their own
+          terms.
         </p>
       </article>
     </div>

@@ -14,10 +14,10 @@ test.describe("DateDrop happy path", () => {
     await expect(page.getByText(/we don't have live table inventory/i)).toBeVisible();
   });
 
-  test("privacy and terms mention Maps, private screenshots, no reservations", async ({ page }) => {
+  test("privacy and terms mention OSM/Geoapify, private screenshots, no reservations", async ({ page }) => {
     await page.goto("/privacy");
     await expect(page.getByRole("heading", { name: "Privacy" })).toBeVisible();
-    await expect(page.getByText(/Google Maps Platform/)).toBeVisible();
+    await expect(page.getByText(/OpenStreetMap|Geoapify|Nominatim|places/i)).toBeVisible();
     await expect(page.getByText(/do not place reservations/i)).toBeVisible();
     await expect(page.getByText(/private/i)).toBeVisible();
 

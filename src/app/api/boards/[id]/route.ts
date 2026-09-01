@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 import { requireUser } from "@/lib/auth";
 import { boards, boardPlaces, places } from "@/lib/models";
 import { mongoConfigured } from "@/lib/mongodb";
-import { nearbyRestaurants } from "@/lib/places";
+import { nearbyRestaurants, placeIdsLookupFilter, placeIdOf } from "@/lib/places";
 
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
@@ -16,13 +16,14 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
     if (!board) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const links = await (await boardPlaces()).find({ boardId: id }).toArray();
     const saved = await (await places())
-      .find({ googlePlaceId: { $in: links.map((l) => l.placeId) } })
+      .find(placeIdsLookupFilter(links.map((l) => l.placeId)))
       .toArray();
     let similar: Awaited<ReturnType<typeof nearbyRestaurants>> = [];
     if (board.lat && board.lng) {
       try {
+        const savedIds = new Set(saved.map((s) => placeIdOf(s)));
         similar = (await nearbyRestaurants(board.lat, board.lng, 6)).filter(
-          (m) => !saved.some((s) => s.googlePlaceId === m.googlePlaceId),
+          (m) => !savedIds.has(placeIdOf(m)),
         );
       } catch {
         similar = [];

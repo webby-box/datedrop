@@ -1,58 +1,28 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useMemo } from "react";
+import Map, { Marker, NavigationControl } from "react-map-gl/maplibre";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 type Pin = { lat: number; lng: number; name: string };
 
+const STYLE = "https://tiles.openfreemap.org/styles/liberty";
+
 export function BoardMap({
   pins,
-  apiKey,
+  attribution,
 }: {
   pins: Pin[];
-  apiKey?: string;
+  /** Extra places-provider line, e.g. "Powered by Geoapify". */
+  attribution?: string;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const center = useMemo(() => {
+    if (!pins.length) return { latitude: 40.73, longitude: -73.99, zoom: 11 };
+    const lat = pins.reduce((s, p) => s + p.lat, 0) / pins.length;
+    const lng = pins.reduce((s, p) => s + p.lng, 0) / pins.length;
+    return { latitude: lat, longitude: lng, zoom: pins.length === 1 ? 14 : 12 };
+  }, [pins]);
 
-  useEffect(() => {
-    if (!apiKey || !ref.current || !pins.length) return;
-    const src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
-    const existing = document.querySelector<HTMLScriptElement>("script[data-datedrop-maps]");
-    const boot = () => {
-      const g = (window as unknown as { google?: { maps: { Map: new (el: HTMLElement, opts: object) => { setCenter: (x: object) => void }; Marker: new (opts: object) => void } } }).google;
-      if (!g || !ref.current) return;
-      const center = { lat: pins[0].lat, lng: pins[0].lng };
-      const map = new g.maps.Map(ref.current, {
-        center,
-        zoom: 13,
-        disableDefaultUI: true,
-        zoomControl: true,
-        styles: [
-          { elementType: "geometry", stylers: [{ color: "#1c1914" }] },
-          { elementType: "labels.text.fill", stylers: [{ color: "#d4a574" }] },
-          { featureType: "water", stylers: [{ color: "#0c0b09" }] },
-        ],
-      });
-      pins.forEach((p) => new g.maps.Marker({ map, position: { lat: p.lat, lng: p.lng }, title: p.name }));
-    };
-    if (existing) {
-      boot();
-      return;
-    }
-    const s = document.createElement("script");
-    s.src = src;
-    s.async = true;
-    s.dataset.datedropMaps = "1";
-    s.onload = boot;
-    document.head.appendChild(s);
-  }, [apiKey, pins]);
-
-  if (!apiKey) {
-    return (
-      <div className="ticket flex h-72 items-center justify-center rounded-2xl p-6 text-center text-sm text-[#9a8f7e]">
-        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is not set. Pins still list below. Place data requires Google Maps Platform attribution when the map loads.
-      </div>
-    );
-  }
   if (!pins.length) {
     return (
       <div className="ticket flex h-72 items-center justify-center rounded-2xl text-[#9a8f7e]">
@@ -60,10 +30,32 @@ export function BoardMap({
       </div>
     );
   }
+
+  const credit = attribution
+    ? `© OpenStreetMap contributors · ${attribution}`
+    : "© OpenStreetMap contributors · OpenFreeMap";
+
   return (
     <div>
-      <div ref={ref} className="h-72 w-full overflow-hidden rounded-2xl border border-[rgba(244,234,213,0.12)]" />
-      <p className="map-attribution mt-2">Map data © Google. Google Maps Platform.</p>
+      <div className="h-72 w-full overflow-hidden rounded-2xl border border-[rgba(244,234,213,0.12)]">
+        <Map
+          initialViewState={center}
+          mapStyle={STYLE}
+          style={{ width: "100%", height: "100%" }}
+          attributionControl={false}
+        >
+          <NavigationControl position="top-right" showCompass={false} />
+          {pins.map((p) => (
+            <Marker key={`${p.lat},${p.lng},${p.name}`} longitude={p.lng} latitude={p.lat} anchor="bottom">
+              <div
+                title={p.name}
+                className="h-3 w-3 rounded-full border-2 border-[#0c0b09] bg-[#c45c26] shadow-lg"
+              />
+            </Marker>
+          ))}
+        </Map>
+      </div>
+      <p className="map-attribution mt-2">{credit}</p>
     </div>
   );
 }

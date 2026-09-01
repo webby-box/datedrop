@@ -1,4 +1,4 @@
-import { extractFromImages, mockExtraction } from "./gemini";
+import { extractFromImages, mockExtraction } from "./llm";
 import { textSearch, PlacesNotConfigured } from "./places";
 import { classifyUrl } from "./urls";
 import type { CaptureRecord } from "./models";
@@ -21,7 +21,7 @@ async function resolveMatches(extraction: Extraction): Promise<Extraction> {
       if (err instanceof PlacesNotConfigured) {
         candidates.push({
           ...c,
-          cues: [...c.cues, "Places API key missing — confirm later"],
+          cues: [...c.cues, "Places lookup unavailable — search to confirm"],
         });
       } else {
         candidates.push({

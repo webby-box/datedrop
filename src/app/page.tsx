@@ -4,7 +4,7 @@ import { googleAuthConfigured } from "@/lib/env";
 
 const STEPS = [
   { n: "01", title: "Drop", body: "Screenshots of Maps pins, IG stories, Resy screens, postcards — or paste a Maps URL." },
-  { n: "02", title: "Confirm", body: "Gemini reads the chrome. You pick the Google Place. We never auto-save a guess." },
+  { n: "02", title: "Confirm", body: "Vision reads the chrome. You pick the place match. We never auto-save a guess." },
   { n: "03", title: "Date", body: "Set a range. See booking-window copy, climate, and an itinerary from your saved places." },
 ];
 

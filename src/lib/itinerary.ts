@@ -2,6 +2,7 @@ import type { PlanDay } from "./types";
 import { haversineMeters } from "./utils";
 import { nearbyAttractions } from "./places";
 import type { PlaceRecord } from "./models";
+import { placeIdOf } from "./places";
 
 function eachDate(start: string, end: string) {
   const out: string[] = [];
@@ -53,7 +54,7 @@ export async function buildDays(opts: {
   dates.forEach((date, i) => {
     const cluster = clusters[i % Math.max(clusters.length, 1)] || [];
     const items: PlanDay["items"] = cluster.map((p, idx) => ({
-      placeId: p.googlePlaceId,
+      placeId: placeIdOf(p),
       name: p.name,
       window: idx === 0 ? "Lunch / early" : idx === 1 ? "Golden hour" : "Dinner",
       note: p.primaryType?.replace(/_/g, " ") || "From your screenshots",

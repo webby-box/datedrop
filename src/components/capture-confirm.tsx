@@ -7,10 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
 type Match = {
-  googlePlaceId: string;
+  externalPlaceId?: string;
+  googlePlaceId?: string;
   name: string;
   formattedAddress: string;
   rating?: number;
+  provider?: string;
 };
 
 type Candidate = {
@@ -32,6 +34,10 @@ type Capture = {
   extraction?: { summary: string; candidates: Candidate[] };
   error?: string;
 };
+
+function mid(m: Match) {
+  return m.externalPlaceId || m.googlePlaceId || m.name;
+}
 
 export function CaptureConfirm({ id }: { id: string }) {
   const router = useRouter();
@@ -77,7 +83,7 @@ export function CaptureConfirm({ id }: { id: string }) {
       <div className="px-5 py-16">
         <p className="kicker">Reading the chrome</p>
         <h1 className="serif mt-2 text-4xl">Pin, rating row, bottom sheet…</h1>
-        <p className="mt-3 text-[#9a8f7e]">Gemini 2.5 Flash is extracting visible places only.</p>
+        <p className="mt-3 text-[#9a8f7e]">Vision model is extracting visible places only.</p>
       </div>
     );
   }
@@ -122,20 +128,30 @@ export function CaptureConfirm({ id }: { id: string }) {
               <p className="mt-2 text-xs text-[#9a8f7e]">Cues: {c.cues.join(", ") || "none"}</p>
               <ul className="mt-4 space-y-2">
                 {(c.matches || []).slice(0, 3).map((m, mi) => (
-                  <li key={m.googlePlaceId} className="flex items-start justify-between gap-3 border-t border-[rgba(244,234,213,0.08)] py-3">
+                  <li key={mid(m)} className="flex items-start justify-between gap-3 border-t border-[rgba(244,234,213,0.08)] py-3">
                     <div>
                       <p className="font-medium">{m.name}</p>
                       <p className="text-sm text-[#9a8f7e]">{m.formattedAddress}</p>
-                      {m.rating ? <p className="text-xs text-[#d4a574]">{m.rating} on Google</p> : null}
+                      {m.rating ? <p className="text-xs text-[#d4a574]">{m.rating} rating</p> : null}
                     </div>
-                    <Button size="sm" onClick={() => void act({ action: "save", candidateIndex: ci, matchIndex: mi, googlePlaceId: m.googlePlaceId })}>
+                    <Button
+                      size="sm"
+                      onClick={() =>
+                        void act({
+                          action: "save",
+                          candidateIndex: ci,
+                          matchIndex: mi,
+                          externalPlaceId: mid(m),
+                        })
+                      }
+                    >
                       Save
                     </Button>
                   </li>
                 ))}
               </ul>
               {!c.matches?.length && (
-                <p className="mt-3 text-sm text-[#c9a227]">No Places matches yet — search instead.</p>
+                <p className="mt-3 text-sm text-[#c9a227]">No place matches yet — search instead.</p>
               )}
             </section>
           ))}
@@ -152,25 +168,27 @@ export function CaptureConfirm({ id }: { id: string }) {
             if (json?.matches) setSearchHits(json.matches);
           }}
         >
-          <Input placeholder="Search Google Places instead" value={q} onChange={(e) => setQ(e.target.value)} />
+          <Input placeholder="Search places instead" value={q} onChange={(e) => setQ(e.target.value)} />
           <Button type="submit" variant="amber">Search</Button>
         </form>
         {searchHits && (
           <ul className="mt-4 space-y-2">
             {searchHits.map((m) => (
-              <li key={m.googlePlaceId} className="flex justify-between gap-3">
+              <li key={mid(m)} className="flex justify-between gap-3">
                 <div>
                   <p>{m.name}</p>
                   <p className="text-sm text-[#9a8f7e]">{m.formattedAddress}</p>
                 </div>
-                <Button size="sm" onClick={() => void act({ action: "save", googlePlaceId: m.googlePlaceId })}>
+                <Button size="sm" onClick={() => void act({ action: "save", externalPlaceId: mid(m) })}>
                   Save
                 </Button>
               </li>
             ))}
           </ul>
         )}
-        <p className="map-attribution mt-6">Place data from Google Maps Platform. Confirm a match — we never auto-save a guess.</p>
+        <p className="map-attribution mt-6">
+          Place data from OpenStreetMap via Geoapify / LocationIQ / Nominatim. Confirm a match — we never auto-save a guess.
+        </p>
       </div>
     </div>
   );

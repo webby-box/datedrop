@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { NO_INVENTORY_COPY } from "@/lib/booking";
 
 type Place = {
-  googlePlaceId: string;
+  externalPlaceId?: string;
+  googlePlaceId?: string;
   name: string;
   formattedAddress: string;
   lat: number;
@@ -18,13 +19,26 @@ type Place = {
   websiteUri?: string;
   googleMapsUri?: string;
   bookingPlatform: string;
+  provider?: string;
 };
 
-export function PlaceClient({ id, mapsKey }: { id: string; mapsKey?: string }) {
+function pid(p: { externalPlaceId?: string; googlePlaceId?: string; name?: string }) {
+  return p.externalPlaceId || p.googlePlaceId || p.name || "";
+}
+
+export function PlaceClient({
+  id,
+  attribution,
+}: {
+  id: string;
+  attribution?: string;
+  /** @deprecated unused */
+  mapsKey?: string;
+}) {
   const [data, setData] = useState<{
     place: Place;
     screenshots: string[];
-    similar: { name: string; googlePlaceId: string }[];
+    similar: { name: string; externalPlaceId?: string; googlePlaceId?: string }[];
     book: { url: string; label: string };
     copy: string;
   } | null>(null);
@@ -32,7 +46,7 @@ export function PlaceClient({ id, mapsKey }: { id: string; mapsKey?: string }) {
 
   useEffect(() => {
     void (async () => {
-      const res = await fetch(`/api/places/${id}`);
+      const res = await fetch(`/api/places/${encodeURIComponent(id)}`);
       const json = await res.json();
       if (!res.ok) setErr(json.error);
       else setData(json);
@@ -50,11 +64,15 @@ export function PlaceClient({ id, mapsKey }: { id: string; mapsKey?: string }) {
       <p className="mt-2 text-[#9a8f7e]">{p.formattedAddress}</p>
       {p.rating ? (
         <p className="mt-2 text-sm text-[#d4a574]">
-          {p.rating} · {p.userRatingCount} reviews on Google
+          {p.rating}
+          {p.userRatingCount ? ` · ${p.userRatingCount} reviews` : ""}
         </p>
       ) : null}
       <div className="mt-6">
-        <BoardMap apiKey={mapsKey} pins={[{ lat: p.lat, lng: p.lng, name: p.name }]} />
+        <BoardMap
+          attribution={attribution}
+          pins={[{ lat: p.lat, lng: p.lng, name: p.name }]}
+        />
       </div>
       <a
         href={data.book.url}
@@ -78,14 +96,14 @@ export function PlaceClient({ id, mapsKey }: { id: string; mapsKey?: string }) {
           <p className="kicker">Similar</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {data.similar.map((s) => (
-              <Badge key={s.googlePlaceId}>{s.name}</Badge>
+              <Badge key={pid(s)}>{s.name}</Badge>
             ))}
           </div>
         </div>
       ) : null}
       {p.googleMapsUri && (
         <a href={p.googleMapsUri} className="mt-8 inline-block text-sm text-[#d4a574]" target="_blank" rel="noreferrer">
-          Open in Google Maps ↗
+          Open map ↗
         </a>
       )}
     </div>

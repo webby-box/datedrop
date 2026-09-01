@@ -14,9 +14,27 @@ export type SourceHint =
 export type BoardPlaceStatus = "want" | "planned" | "booked" | "skipped";
 export type BookingPlatform = "resy" | "opentable" | "tock" | "sevenrooms" | "website" | "unknown";
 export type ClimateVerdict = "go" | "caution" | "skip";
+export type PlacesProvider = "geoapify" | "locationiq" | "nominatim" | "google" | "mock";
+export type LlmProvider = "gemini" | "groq" | "auto";
+
+/** Normalized place from any geocoder / places adapter. */
+export type NormalizedPlace = {
+  id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  website?: string;
+  phone?: string;
+  categories: string[];
+  googleMapsUri?: string;
+  rating?: number;
+  provider: PlacesProvider;
+};
 
 export type PlaceMatch = {
-  googlePlaceId: string;
+  externalPlaceId: string;
+  provider: PlacesProvider;
   name: string;
   formattedAddress: string;
   lat: number;
@@ -26,6 +44,10 @@ export type PlaceMatch = {
   primaryType?: string;
   googleMapsUri?: string;
   websiteUri?: string;
+  phone?: string;
+  categories?: string[];
+  /** @deprecated use externalPlaceId — kept for client payloads during transition */
+  googlePlaceId?: string;
 };
 
 export type Candidate = {

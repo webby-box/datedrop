@@ -15,17 +15,18 @@ export default function PrivacyPage() {
         <h2 className="serif mt-10 text-2xl text-[#f4ead5]">Screenshots</h2>
         <p className="mt-3">
           Images you upload are stored privately (Vercel Blob when configured, or a local demo
-          folder if the blob token is missing). They are sent to Google Gemini solely to extract
-          visible place names. We do not run public screenshot pages. You can delete your data
-          from Settings.
+          folder if the blob token is missing). They are sent to a vision model (Google Gemini or
+          Groq) solely to extract visible place names. We do not run public screenshot pages. You
+          can delete your data from Settings.
         </p>
-        <h2 className="serif mt-10 text-2xl text-[#f4ead5]">Google Maps Platform</h2>
+        <h2 className="serif mt-10 text-2xl text-[#f4ead5]">Places &amp; maps</h2>
         <p className="mt-3">
-          Place matching uses the Google Places API (New) — Text Search, Place Details, and Nearby
-          Search — with field masks. We store <code>place_id</code> values so we can refresh
-          details after seven days without guessing. Maps on boards use the Google Maps JavaScript
-          API. Google Maps Platform terms and attribution apply. This product uses Google Maps
-          Platform APIs; we are not affiliated with Google beyond that licensed use.
+          Place matching uses free geocoders: Geoapify (primary when keyed), LocationIQ, or the
+          public OpenStreetMap Nominatim service (server-side proxy, 1 request/second, cached). We
+          store an external place id plus provider so we can refresh details after seven days.
+          Board maps use MapLibre GL with OpenFreeMap vector tiles — no Google Maps JavaScript key
+          required. © OpenStreetMap contributors; Powered by Geoapify when that provider is active.
+          Optional legacy Google Places / Maps keys are supported but not required.
         </p>
         <h2 className="serif mt-10 text-2xl text-[#f4ead5]">Reservations</h2>
         <p className="mt-3">
@@ -37,7 +38,8 @@ export default function PrivacyPage() {
         <h2 className="serif mt-10 text-2xl text-[#f4ead5]">Account</h2>
         <p className="mt-3">
           Sign-in is handled by Google Sign-In (Auth.js). We store your Google user id (sub) and
-          email so boards stay yours. Rate limit: 20 captures per hour.
+          email so boards stay yours. When OAuth keys are missing, the app runs in demo-local mode.
+          Rate limit: 20 captures per hour.
         </p>
       </article>
     </div>

@@ -6,7 +6,8 @@ import { mongoConfigured } from "@/lib/mongodb";
 import { seasonalityFor } from "@/lib/climate";
 import { buildDays } from "@/lib/itinerary";
 import { bookingDeepLink, bookingWindowCopy, NO_INVENTORY_COPY } from "@/lib/booking";
-import { writeItineraryProse } from "@/lib/gemini";
+import { writeItineraryProse } from "@/lib/llm";
+import { placeIdsLookupFilter, placeIdOf } from "@/lib/places";
 
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
@@ -36,7 +37,7 @@ export async function POST(_req: Request, ctx: { params: Promise<{ id: string }>
     const end = board.endDate || start;
     const links = await (await boardPlaces()).find({ boardId: id }).toArray();
     const saved = await (await places())
-      .find({ googlePlaceId: { $in: links.map((l) => l.placeId) } })
+      .find(placeIdsLookupFilter(links.map((l) => l.placeId)))
       .toArray();
 
     const restaurantHeavy = saved.filter((p) =>
@@ -97,7 +98,7 @@ export async function POST(_req: Request, ctx: { params: Promise<{ id: string }>
         partySize: board.partySize || 2,
       });
       return {
-        placeId: p.googlePlaceId,
+        placeId: placeIdOf(p),
         name: p.name,
         ...link,
         copy: bookingWindowCopy({ date: start, city: board.city, restaurant: true }),

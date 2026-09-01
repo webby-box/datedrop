@@ -1,5 +1,5 @@
 import type { ClimateVerdict, Seasonality } from "./types";
-import { writeSeasonalityProse } from "./gemini";
+import { writeSeasonalityProse } from "./llm";
 import { mongoConfigured, getDb } from "./mongodb";
 
 const MONTHS = [

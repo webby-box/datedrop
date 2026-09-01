@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 import { requireUser } from "@/lib/auth";
 import { captures, boards, boardPlaces } from "@/lib/models";
 import { mongoConfigured } from "@/lib/mongodb";
-import { textSearch, upsertPlaceFromMatch } from "@/lib/places";
+import { textSearch, upsertPlaceFromMatch, placeIdOf } from "@/lib/places";
 import type { PlaceMatch } from "@/lib/types";
 
 function cityFromAddress(addr: string, fallback?: string) {
@@ -28,6 +28,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       action: "save" | "skip" | "not_a_place" | "search";
       candidateIndex?: number;
       matchIndex?: number;
+      externalPlaceId?: string;
+      /** @deprecated use externalPlaceId */
       googlePlaceId?: string;
       query?: string;
     };
@@ -50,11 +52,12 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       return NextResponse.json({ matches: found });
     }
 
-    if (body.googlePlaceId) {
+    const wantedId = body.externalPlaceId || body.googlePlaceId;
+    if (wantedId) {
       const all = rec.extraction?.candidates.flatMap((c) => c.matches) || [];
-      match = all.find((m) => m.googlePlaceId === body.googlePlaceId);
+      match = all.find((m) => placeIdOf(m) === wantedId);
       if (!match) {
-        const found = await textSearch(body.googlePlaceId, 1);
+        const found = await textSearch(wantedId, 1);
         match = found[0];
       }
     } else {
@@ -64,12 +67,13 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
     if (!match) {
       return NextResponse.json(
-        { error: "Pick a Google Place match. DateDrop never auto-saves a guess." },
+        { error: "Pick a place match. DateDrop never auto-saves a guess." },
         { status: 400 },
       );
     }
 
     const place = await upsertPlaceFromMatch(match);
+    const pid = placeIdOf(place);
     const city = cityFromAddress(place.formattedAddress, rec.extraction?.candidates[0]?.city);
     const country = countryFromAddress(place.formattedAddress);
     const boardCol = await boards();
@@ -92,12 +96,12 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
     const bp = await boardPlaces();
     await bp.updateOne(
-      { boardId: board!._id!.toString(), placeId: place.googlePlaceId },
+      { boardId: board!._id!.toString(), placeId: pid },
       {
         $setOnInsert: {
           boardId: board!._id!.toString(),
           userId: user.userId,
-          placeId: place.googlePlaceId,
+          placeId: pid,
           captureId: id,
           sourceScreenshotUrl: rec.blobUrls[0],
           status: "want",
@@ -115,7 +119,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     return NextResponse.json({
       ok: true,
       boardId: board!._id!.toString(),
-      placeId: place.googlePlaceId,
+      placeId: pid,
     });
   } catch (err) {
     const e = err as Error & { status?: number };

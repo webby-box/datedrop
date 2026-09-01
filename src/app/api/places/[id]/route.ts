@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { places, boardPlaces } from "@/lib/models";
 import { mongoConfigured } from "@/lib/mongodb";
-import { nearbyRestaurants } from "@/lib/places";
+import { nearbyRestaurants, placeLookupFilter, placeIdOf } from "@/lib/places";
 import { bookingDeepLink, NO_INVENTORY_COPY } from "@/lib/booking";
 
 export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -12,10 +12,11 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
       return NextResponse.json({ error: "MONGODB_URI is not set." }, { status: 503 });
     }
     const { id } = await ctx.params;
-    const place = await (await places()).findOne({ googlePlaceId: id });
+    const place = await (await places()).findOne(placeLookupFilter(id));
     if (!place) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const pid = placeIdOf(place);
     const shots = await (await boardPlaces())
-      .find({ userId: user.userId, placeId: id })
+      .find({ userId: user.userId, placeId: { $in: [id, pid].filter(Boolean) } })
       .toArray();
     let similar: Awaited<ReturnType<typeof nearbyRestaurants>> = [];
     try {
@@ -33,7 +34,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
       partySize: party,
     });
     return NextResponse.json({
-      place,
+      place: { ...place, externalPlaceId: pid, googlePlaceId: pid },
       screenshots: shots.map((s) => s.sourceScreenshotUrl).filter(Boolean),
       similar,
       book,

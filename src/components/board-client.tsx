@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { bookingDeepLink, NO_INVENTORY_COPY } from "@/lib/booking";
 
 type Place = {
-  googlePlaceId: string;
+  externalPlaceId?: string;
+  googlePlaceId?: string;
   name: string;
   formattedAddress: string;
   lat: number;
@@ -18,9 +19,22 @@ type Place = {
   primaryType?: string;
   websiteUri?: string;
   bookingPlatform: "resy" | "opentable" | "tock" | "sevenrooms" | "website" | "unknown";
+  provider?: string;
 };
 
-export function BoardClient({ id, mapsKey }: { id: string; mapsKey?: string }) {
+function pid(p: Place) {
+  return p.externalPlaceId || p.googlePlaceId || p.name;
+}
+
+export function BoardClient({
+  id,
+  attribution,
+}: {
+  id: string;
+  attribution?: string;
+  /** @deprecated unused — MapLibre needs no Google key */
+  mapsKey?: string;
+}) {
   const [data, setData] = useState<{
     board: { title: string; city: string; startDate?: string; endDate?: string; partySize: number };
     places: Place[];
@@ -67,11 +81,11 @@ export function BoardClient({ id, mapsKey }: { id: string; mapsKey?: string }) {
     <div className="mx-auto max-w-6xl px-5 py-10">
       <p className="kicker">Board</p>
       <h1 className="serif mt-2 text-5xl">{data.board.title}</h1>
-      <p className="mt-2 text-[#9a8f7e]">Grouped by city from confirmed Google Places — not a guess.</p>
+      <p className="mt-2 text-[#9a8f7e]">Grouped by city from confirmed places — not a guess.</p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_280px]">
         <BoardMap
-          apiKey={mapsKey}
+          attribution={attribution}
           pins={data.places.map((p) => ({ lat: p.lat, lng: p.lng, name: p.name }))}
         />
         <form
@@ -113,10 +127,11 @@ export function BoardClient({ id, mapsKey }: { id: string; mapsKey?: string }) {
                 date: start,
                 partySize: party,
               });
+              const key = pid(p);
               return (
-                <li key={p.googlePlaceId} className="flex flex-wrap items-center justify-between gap-3 py-4">
+                <li key={key} className="flex flex-wrap items-center justify-between gap-3 py-4">
                   <div>
-                    <Link href={`/places/${p.googlePlaceId}`} className="serif text-2xl">
+                    <Link href={`/places/${encodeURIComponent(key)}`} className="serif text-2xl">
                       {p.name}
                     </Link>
                     <p className="text-sm text-[#9a8f7e]">{p.formattedAddress}</p>
@@ -137,7 +152,7 @@ export function BoardClient({ id, mapsKey }: { id: string; mapsKey?: string }) {
           <h2 className="serif mt-2 text-3xl">Not from your screenshots</h2>
           <ul className="mt-4 flex flex-wrap gap-2">
             {data.similar.map((s) => (
-              <Badge key={s.googlePlaceId || s.name}>{s.name}</Badge>
+              <Badge key={pid(s)}>{s.name}</Badge>
             ))}
           </ul>
         </section>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { boards, boardPlaces, places } from "@/lib/models";
 import { mongoConfigured } from "@/lib/mongodb";
+import { placeIdsLookupFilter } from "@/lib/places";
 
 export async function GET() {
   try {
@@ -15,7 +16,7 @@ export async function GET() {
     const out = [];
     for (const b of list) {
       const ids = await bp.find({ boardId: b._id!.toString() }).toArray();
-      const saved = await pl.find({ googlePlaceId: { $in: ids.map((i) => i.placeId) } }).toArray();
+      const saved = await pl.find(placeIdsLookupFilter(ids.map((i) => i.placeId))).toArray();
       out.push({
         ...b,
         _id: b._id!.toString(),

@@ -3,6 +3,7 @@ import { getDb } from "./mongodb";
 import type {
   BoardPlaceStatus,
   BookingPlatform,
+  PlacesProvider,
   CaptureSource,
   CaptureStatus,
   Extraction,
@@ -47,7 +48,11 @@ export type CaptureRecord = {
 
 export type PlaceRecord = {
   _id?: ObjectId;
-  googlePlaceId: string;
+  /** Provider-stable id (Geoapify / LocationIQ / Nominatim / Google). */
+  externalPlaceId: string;
+  provider: PlacesProvider;
+  /** @deprecated legacy Google Places id — still read for old documents */
+  googlePlaceId?: string;
   name: string;
   formattedAddress: string;
   lat: number;
