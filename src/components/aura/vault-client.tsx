@@ -38,23 +38,24 @@ export function VaultClient() {
   return (
     <AppShell>
       <div className="py-6 md:py-10">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="kicker">The Vault</p>
-            <h1 className="serif mt-2 text-4xl md:text-5xl">Saved rooms</h1>
-            <p className="mt-2 text-sm text-[#6b6b6b]">{countLabel} · screenshots & confirmed pins</p>
+            <h1 className="page-title serif mt-2 text-4xl md:text-5xl">Saved rooms</h1>
+            <p className="page-lead mt-2.5">{countLabel} · screenshots & confirmed pins</p>
           </div>
-          <div className="flex w-full flex-col gap-2 sm:flex-row md:w-auto md:min-w-[360px]">
+          <div className="flex w-full flex-col gap-2.5 sm:flex-row md:w-auto md:min-w-[380px]">
             <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Filter by name…"
-              className="h-11 rounded-full border-[rgba(17,17,17,0.1)] bg-white"
+              aria-label="Filter vault by name"
             />
             <select
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="h-11 rounded-full border border-[rgba(17,17,17,0.1)] bg-white px-4 text-sm"
+              aria-label="Filter by city"
+              className="control select-aura w-full sm:w-[11rem]"
             >
               <option value="">All cities</option>
               {cities.map((c) => (
@@ -66,7 +67,7 @@ export function VaultClient() {
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 md:mt-10">
           {loading ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <CardSkeleton />

@@ -12,17 +12,17 @@ export function DeleteData() {
     setMsg(json.ok ? "Deleted. Your inbox is empty." : json.error);
   }
   return (
-    <div className="mt-12 border-t border-[rgba(244,234,213,0.08)] pt-8">
+    <div className="mt-12 border-t border-[var(--line)] pt-8">
       <h2 className="serif text-2xl">Delete my data</h2>
-      <p className="mt-2 text-sm text-[#6b6b6b]">
+      <p className="page-lead mt-2">
         Removes captures, boards, board places, plans, and your Aura user row. Your Google
         account is separate — revoke Aura access in your Google account settings if you want
         the OAuth grant gone too.
       </p>
-      <Button variant="outline" className="mt-4" onClick={() => void run()}>
+      <Button variant="outline" className="mt-5" onClick={() => void run()}>
         Delete my data
       </Button>
-      {msg && <p className="mt-3 text-sm text-[#111]">{msg}</p>}
+      {msg && <p className="mt-3 text-sm text-[var(--ink)]">{msg}</p>}
     </div>
   );
 }

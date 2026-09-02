@@ -28,7 +28,7 @@ export function BoardMap({
 
   if (!pins.length) {
     return (
-      <div className={`card-light flex ${heightClass} items-center justify-center rounded-3xl text-[#6b6b6b]`}>
+      <div className={`card-light flex ${heightClass} items-center justify-center rounded-3xl text-[var(--muted)]`}>
         Save a confirmed place to drop a pin.
       </div>
     );
@@ -40,7 +40,7 @@ export function BoardMap({
 
   return (
     <div className={className}>
-      <div className={`${heightClass} w-full overflow-hidden rounded-3xl border border-[rgba(17,17,17,0.08)]`}>
+      <div className={`${heightClass} w-full overflow-hidden rounded-3xl border border-[var(--line)]`}>
         <Map
           initialViewState={center}
           mapStyle={STYLE}

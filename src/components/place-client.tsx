@@ -53,15 +53,15 @@ export function PlaceClient({
     })();
   }, [id]);
 
-  if (err) return <p className="px-5 py-16 text-[#8b3a2f]">{err}</p>;
-  if (!data) return <p className="px-5 py-16 text-[#6b6b6b]">Loading place…</p>;
+  if (err) return <p className="px-5 py-16 text-[var(--skip)]">{err}</p>;
+  if (!data) return <p className="px-5 py-16 text-[var(--muted)]">Loading place…</p>;
   const p = data.place;
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-10">
       <p className="kicker">{p.primaryType?.replace(/_/g, " ") || "place"}</p>
       <h1 className="serif mt-2 text-5xl">{p.name}</h1>
-      <p className="mt-2 text-[#6b6b6b]">{p.formattedAddress}</p>
+      <p className="mt-2 text-[var(--muted)]">{p.formattedAddress}</p>
       {p.rating ? (
         <p className="mt-2 text-sm text-[#111]">
           {p.rating}
@@ -82,7 +82,7 @@ export function PlaceClient({
       >
         {data.book.label}
       </a>
-      <p className="mt-3 text-sm text-[#6b6b6b]">{data.copy || NO_INVENTORY_COPY}</p>
+      <p className="mt-3 text-sm text-[var(--muted)]">{data.copy || NO_INVENTORY_COPY}</p>
       {data.screenshots?.length ? (
         <div className="mt-10 grid grid-cols-2 gap-3">
           {data.screenshots.map((s) => (

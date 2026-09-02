@@ -5,9 +5,12 @@
   --bg-elevated: #ffffff;
   --ink: #111111;
   --ink-soft: #2a2a2a;
-  --muted: #6b6b6b;
+  --muted: #5c5c5c;
+  --muted-soft: #8a8a8a;
+  --bg-soft: #f0eeea;
+  --line-soft: rgba(17, 17, 17, 0.05);
   --line: rgba(17, 17, 17, 0.08);
-  --line-strong: rgba(17, 17, 17, 0.16);
+  --line-strong: rgba(17, 17, 17, 0.14);
   --charcoal: #1a1a1a;
   --charcoal-2: #242424;
   --cream: #f7f5f2;
@@ -17,8 +20,20 @@
   --caution: #8a6a1f;
   --skip: #8b3a2f;
   --serif: var(--font-newsreader), "Newsreader", Georgia, serif;
-  --sans: var(--font-geist), "Geist", system-ui, sans-serif;
+  --sans: var(--font-geist), "Geist", "Inter", system-ui, sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-2xl: 32px;
+  --radius-pill: 999px;
+  --shadow-card: 0 10px 36px rgba(17, 17, 17, 0.045);
+  --shadow-card-hover: 0 18px 48px rgba(17, 17, 17, 0.08);
+  --shadow-dark: 0 24px 60px rgba(0, 0, 0, 0.2);
+  --control-h: 44px;
+  --control-h-lg: 48px;
 }
 
 @theme inline {
@@ -50,11 +65,15 @@ a {
 
 .serif {
   font-family: var(--serif);
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
 .serif-italic {
   font-family: var(--serif);
   font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
 .kicker {
@@ -62,6 +81,7 @@ a {
   text-transform: uppercase;
   font-size: 10px;
   font-weight: 500;
+  line-height: 1.2;
   color: var(--muted);
 }
 
@@ -69,13 +89,14 @@ a {
   background: linear-gradient(165deg, #222 0%, #141414 100%);
   color: #f5f5f5;
   border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-dark);
 }
 
 .card-light {
   background: var(--bg-elevated);
   border: 1px solid var(--line);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .hairline {
@@ -88,7 +109,7 @@ a {
 }
 
 .aura-shell {
-  padding-bottom: calc(5.5rem + var(--safe-bottom));
+  padding-bottom: calc(5.75rem + var(--safe-bottom));
 }
 
 @media (min-width: 768px) {
@@ -135,4 +156,106 @@ a {
   0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.55); }
   70% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
   100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+.page-title {
+  font-family: var(--serif);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.page-lead {
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.15s ease;
+}
+
+.back-link:hover {
+  color: var(--ink);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: var(--radius-pill);
+  background: rgba(17, 17, 17, 0.05);
+  padding: 0.35rem 0.75rem;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.card-interactive:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+}
+
+.divider {
+  height: 1px;
+  background: var(--line);
+}
+
+.control {
+  height: var(--control-h);
+  min-height: var(--control-h);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elevated);
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.control:focus-visible {
+  outline: none;
+  border-color: rgba(17, 17, 17, 0.28);
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
+}
+
+.control-lg {
+  height: var(--control-h-lg);
+  min-height: var(--control-h-lg);
+}
+
+.select-aura {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235c5c5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.prose-legal h2 {
+  font-family: var(--serif);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.prose-legal p,
+.prose-legal li {
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+::selection {
+  background: rgba(17, 17, 17, 0.12);
 }

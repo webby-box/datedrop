@@ -29,7 +29,7 @@ export function AlertCard({ alert, className }: { alert: AlertCardData; classNam
     <Link
       href={`/alerts/${alert._id}`}
       className={cn(
-        "card-dark fade-up group relative block overflow-hidden rounded-[28px] transition hover:-translate-y-0.5",
+        "card-dark fade-up group relative block overflow-hidden rounded-[var(--radius-xl)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-dark)]",
         className,
       )}
     >
@@ -39,7 +39,7 @@ export function AlertCard({ alert, className }: { alert: AlertCardData; classNam
           <img
             src={alert.imageUrl}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover opacity-35 mix-blend-luminosity transition group-hover:opacity-45"
+            className="absolute inset-0 h-full w-full object-cover opacity-35 mix-blend-luminosity transition duration-500 group-hover:opacity-45 group-hover:scale-[1.02]"
           />
         ) : null}
         <div className="relative z-10 flex h-full min-h-[190px] flex-col justify-between md:min-h-[220px]">
@@ -55,11 +55,11 @@ export function AlertCard({ alert, className }: { alert: AlertCardData; classNam
             ) : null}
           </div>
           <div>
-            <h3 className="serif-italic text-3xl leading-tight text-white md:text-4xl">
+            <h3 className="serif-italic text-3xl leading-[1.1] text-white md:text-4xl">
               {alert.placeName || alert.subtitle}
             </h3>
-            <p className="mt-2 line-clamp-2 text-sm text-white/70">{alert.body}</p>
-            <p className="mt-4 text-[10px] font-medium uppercase tracking-[0.22em] text-white/50">
+            <p className="mt-2.5 line-clamp-2 text-sm leading-relaxed text-white/70">{alert.body}</p>
+            <p className="mt-5 text-[10px] font-medium uppercase tracking-[0.22em] text-white/50 transition group-hover:text-white/70">
               View logistics →
             </p>
           </div>

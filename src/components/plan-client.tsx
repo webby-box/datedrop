@@ -82,7 +82,7 @@ export function PlanClient({ id }: { id: string }) {
     <div className="mx-auto max-w-3xl px-5 py-10">
       <p className="kicker">Plan</p>
       <h1 className="serif mt-2 text-5xl">Does the week work?</h1>
-      <p className="mt-3 text-[#2a2a2a]">
+      <p className="mt-3 text-[var(--ink-soft)]">
         Climate from Open-Meteo 1991–2020 normals. Booking windows, not fake slots. Itinerary from
         this board&apos;s saved places.
       </p>
@@ -96,17 +96,17 @@ export function PlanClient({ id }: { id: string }) {
           </Button>
         )}
       </div>
-      {err && <p className="mt-4 text-[#8b3a2f]">{err}</p>}
+      {err && <p className="mt-4 text-[var(--skip)]">{err}</p>}
       {plan && (
         <div className="mt-10 space-y-10">
           <section className="card-light rounded-2xl p-6">
             <div className="flex items-center gap-3">
               <Badge>{plan.seasonality.verdict}</Badge>
-              {plan.seasonality.skipped && <span className="text-xs text-[#6b6b6b]">climate skipped</span>}
+              {plan.seasonality.skipped && <span className="text-xs text-[var(--muted)]">climate skipped</span>}
             </div>
-            <p className="mt-3 text-[#2a2a2a]">{plan.seasonality.prose}</p>
+            <p className="mt-3 text-[var(--ink-soft)]">{plan.seasonality.prose}</p>
             {!plan.seasonality.skipped && (
-              <p className="mt-2 text-xs text-[#6b6b6b]">
+              <p className="mt-2 text-xs text-[var(--muted)]">
                 Mean max {Math.round(plan.seasonality.meanMaxC)}°C / min {Math.round(plan.seasonality.meanMinC)}°C · ~
                 {Math.round(plan.seasonality.precipMm)} mm. {attr}
               </p>
@@ -119,7 +119,7 @@ export function PlanClient({ id }: { id: string }) {
                 <li key={c.name} className="flex items-center justify-between gap-3">
                   <div>
                     <p>{c.name}</p>
-                    <p className="text-xs text-[#6b6b6b]">{c.copy}</p>
+                    <p className="text-xs text-[var(--muted)]">{c.copy}</p>
                   </div>
                   <a href={c.url} target="_blank" rel="noreferrer" className="text-sm text-[#111]">
                     {c.label} ↗
@@ -134,19 +134,19 @@ export function PlanClient({ id }: { id: string }) {
               <div key={d.date} className="mt-5">
                 <p className="kicker">{d.date}</p>
                 <h3 className="serif text-2xl">{d.title}</h3>
-                <ul className="mt-2 space-y-1 text-[#2a2a2a]">
+                <ul className="mt-2 space-y-1 text-[var(--ink-soft)]">
                   {d.items.map((i, idx) => (
                     <li key={idx}>
                       <span className="text-[#111]">{i.window}</span> — {i.name}
                       {i.suggested ? " · Suggested, not from your screenshots" : ""} 
-                      <span className="text-[#6b6b6b]"> · {i.note}</span>
+                      <span className="text-[var(--muted)]"> · {i.note}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             ))}
           </section>
-          <p className="text-sm text-[#6b6b6b]">{plan.bookingCopy}</p>
+          <p className="text-sm text-[var(--muted)]">{plan.bookingCopy}</p>
         </div>
       )}
     </div>

@@ -68,8 +68,8 @@ export function BoardClient({
     });
   }
 
-  if (err) return <p className="px-5 py-16 text-[#8b3a2f]">{err}</p>;
-  if (!data) return <p className="px-5 py-16 text-[#6b6b6b]">Loading board…</p>;
+  if (err) return <p className="px-5 py-16 text-[var(--skip)]">{err}</p>;
+  if (!data) return <p className="px-5 py-16 text-[var(--muted)]">Loading board…</p>;
 
   const groups = new Map<string, Place[]>();
   for (const p of data.places) {
@@ -81,7 +81,7 @@ export function BoardClient({
     <div className="mx-auto max-w-6xl px-5 py-10">
       <p className="kicker">Board</p>
       <h1 className="serif mt-2 text-5xl">{data.board.title}</h1>
-      <p className="mt-2 text-[#6b6b6b]">Grouped by city from confirmed places — not a guess.</p>
+      <p className="mt-2 text-[var(--muted)]">Grouped by city from confirmed places — not a guess.</p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_280px]">
         <BoardMap
@@ -96,15 +96,15 @@ export function BoardClient({
           }}
         >
           <p className="kicker">When</p>
-          <label className="block text-xs text-[#6b6b6b]">
+          <label className="block text-xs text-[var(--muted)]">
             Start
             <Input type="date" value={start} onChange={(e) => setStart(e.target.value)} />
           </label>
-          <label className="block text-xs text-[#6b6b6b]">
+          <label className="block text-xs text-[var(--muted)]">
             End
             <Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} />
           </label>
-          <label className="block text-xs text-[#6b6b6b]">
+          <label className="block text-xs text-[var(--muted)]">
             Party size
             <Input type="number" min={1} max={20} value={party} onChange={(e) => setParty(Number(e.target.value))} />
           </label>
@@ -134,7 +134,7 @@ export function BoardClient({
                     <Link href={`/places/${encodeURIComponent(key)}`} className="serif text-2xl">
                       {p.name}
                     </Link>
-                    <p className="text-sm text-[#6b6b6b]">{p.formattedAddress}</p>
+                    <p className="text-sm text-[var(--muted)]">{p.formattedAddress}</p>
                   </div>
                   <a href={book.url} target="_blank" rel="noreferrer" className="text-sm text-[#111]">
                     {book.label} ↗
@@ -158,7 +158,7 @@ export function BoardClient({
         </section>
       ) : null}
 
-      <p className="mt-10 max-w-xl text-sm text-[#6b6b6b]">{NO_INVENTORY_COPY}</p>
+      <p className="mt-10 max-w-xl text-sm text-[var(--muted)]">{NO_INVENTORY_COPY}</p>
     </div>
   );
 }

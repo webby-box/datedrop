@@ -48,13 +48,13 @@ export function ExploreClient() {
   return (
     <AppShell live={live}>
       <div className="grid gap-8 py-6 md:grid-cols-[1.15fr_0.85fr] md:gap-10 md:py-10">
-        <section className="space-y-5">
+        <section className="space-y-6">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="kicker flex items-center gap-2">
+              <p className="kicker flex flex-wrap items-center gap-2">
                 {live ? (
                   <>
-                    <span className="inline-flex h-5 items-center gap-1.5 rounded-full bg-black px-2 text-[9px] text-white">
+                    <span className="inline-flex h-5 items-center gap-1.5 rounded-full bg-[var(--ink)] px-2 text-[9px] tracking-[0.16em] text-white">
                       <span className="live-dot" /> Live
                     </span>
                     Proactive alerts
@@ -63,12 +63,15 @@ export function ExploreClient() {
                   "Proactive alerts"
                 )}
               </p>
-              <h1 className="serif mt-2 text-4xl tracking-tight md:text-5xl">Explore</h1>
-              <p className="mt-2 max-w-md text-sm text-[#6b6b6b]">
+              <h1 className="page-title serif mt-2 text-4xl md:text-5xl">Explore</h1>
+              <p className="page-lead mt-2.5 max-w-md">
                 Booking windows, rare vault findings, and taste matches — never live Resy scrapes.
               </p>
             </div>
-            <Link href="/capture" className="hidden rounded-full bg-black px-4 py-2 text-xs uppercase tracking-[0.16em] text-white md:inline-flex">
+            <Link
+              href="/capture"
+              className="focus-ring hidden min-h-[44px] items-center rounded-full bg-[var(--ink)] px-4 text-[11px] uppercase tracking-[0.16em] text-white transition hover:bg-black md:inline-flex"
+            >
               Capture
             </Link>
           </div>
@@ -95,18 +98,18 @@ export function ExploreClient() {
           )}
         </section>
 
-        <aside className="space-y-6">
-          <div className="card-light rounded-[28px] p-5">
+        <aside className="space-y-5">
+          <div className="card-light rounded-[var(--radius-xl)] p-5 md:p-6">
             <p className="kicker">Vault map</p>
-            <h2 className="serif-italic mt-2 text-2xl">Your pins</h2>
-            <div className="mt-4">
+            <h2 className="serif-italic mt-2 text-2xl md:text-[1.75rem]">Your pins</h2>
+            <div className="mt-4 overflow-hidden rounded-[var(--radius-lg)]">
               <BoardMap pins={pins} heightClass="h-64 md:h-80" />
             </div>
           </div>
-          <div className="card-light rounded-[28px] p-5">
+          <div className="card-light rounded-[var(--radius-xl)] p-5 md:p-6">
             <p className="kicker">Taste profile</p>
-            <h2 className="serif-italic mt-2 text-2xl">What Aura watches</h2>
-            <p className="mt-2 text-sm text-[#6b6b6b]">Tap chips to refine preference-match alerts.</p>
+            <h2 className="serif-italic mt-2 text-2xl md:text-[1.75rem]">What Aura watches</h2>
+            <p className="page-lead mt-2">Tap chips to refine preference-match alerts.</p>
             <div className="mt-4">
               <TasteChips />
             </div>

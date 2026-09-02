@@ -43,11 +43,11 @@ export function LogisticsClient({ id }: { id: string }) {
     })();
   }, [id]);
 
-  if (err) return <p className="py-16 text-[#8b3a2f]">{err}</p>;
+  if (err) return <p className="py-16 text-[var(--skip)]">{err}</p>;
   if (!data) {
     return (
       <div className="py-10">
-        <div className="skeleton h-56 rounded-3xl" />
+        <div className="skeleton h-56 rounded-[var(--radius-xl)]" />
         <div className="skeleton mt-4 h-8 w-2/3 rounded-full" />
       </div>
     );
@@ -59,12 +59,12 @@ export function LogisticsClient({ id }: { id: string }) {
   return (
     <div className="fade-up mx-auto max-w-2xl py-6 md:py-10">
       <div className="mb-4 flex items-center justify-between">
-        <Link href="/explore" className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(17,17,17,0.1)] bg-white">
+        <Link href="/" className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-white">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(17,17,17,0.1)] bg-white"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-white"
           onClick={async () => {
             try {
               await navigator.clipboard.writeText(window.location.href);
@@ -78,7 +78,7 @@ export function LogisticsClient({ id }: { id: string }) {
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-3xl bg-[#1a1a1a]">
+      <div className="overflow-hidden rounded-[var(--radius-xl)] bg-[#1a1a1a]">
         {data.screenshot ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={data.screenshot} alt="" className="h-56 w-full object-cover opacity-90 md:h-72" />
@@ -91,33 +91,33 @@ export function LogisticsClient({ id }: { id: string }) {
 
       <p className="kicker mt-6">{data.alert.title}</p>
       <h1 className="serif-italic mt-2 text-4xl md:text-5xl">{name}</h1>
-      <p className="mt-2 text-sm text-[#6b6b6b]">{address}</p>
-      <p className="mt-4 text-sm leading-relaxed text-[#2a2a2a]">{data.alert.body}</p>
+      <p className="mt-2 text-sm text-[var(--muted)]">{address}</p>
+      <p className="mt-4 text-sm leading-relaxed text-[var(--ink-soft)]">{data.alert.body}</p>
 
       <div className="mt-10 space-y-8">
         <section>
           <p className="kicker">Booking strategy</p>
-          <p className="mt-3 text-sm leading-relaxed text-[#2a2a2a]">
+          <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">
             {data.logistics?.bookingStrategy || "Open the booking site for typical release windows. Aura never holds inventory."}
           </p>
         </section>
         <section>
           <p className="kicker">Pose direction</p>
-          <p className="mt-3 text-sm leading-relaxed text-[#2a2a2a]">
+          <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">
             {data.logistics?.poseDirection || "Soft available light; editorial table vignette."}
           </p>
         </section>
         <section>
           <p className="kicker">Optimal setting</p>
-          <p className="mt-3 text-sm leading-relaxed text-[#2a2a2a]">
+          <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">
             {data.logistics?.optimalSetting || "Party of two, early evening."}
           </p>
         </section>
-        <section className="card-light rounded-3xl p-5">
+        <section className="card-light rounded-[var(--radius-xl)] p-5">
           <p className="kicker">Why this alert</p>
-          <p className="mt-2 text-sm text-[#2a2a2a]">{data.alert.why}</p>
+          <p className="mt-2 text-sm text-[var(--ink-soft)]">{data.alert.why}</p>
           {data.alert.suggestedDates?.start && (
-            <p className="mt-2 text-xs text-[#6b6b6b]">
+            <p className="mt-2 text-xs text-[var(--muted)]">
               Suggested dates: {data.alert.suggestedDates.start}
               {data.alert.suggestedDates.end ? ` → ${data.alert.suggestedDates.end}` : ""}
             </p>
@@ -137,7 +137,7 @@ export function LogisticsClient({ id }: { id: string }) {
           </a>
         )}
         {data.board && (
-          <Link href={`/boards/${data.board._id}/plan`} className="inline-flex h-12 flex-1 items-center justify-center rounded-full border border-[rgba(17,17,17,0.12)] text-sm">
+          <Link href={`/boards/${data.board._id}/plan`} className="inline-flex h-12 flex-1 items-center justify-center rounded-full border border-[var(--line-strong)] text-sm">
             Draft plan
           </Link>
         )}

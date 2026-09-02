@@ -16,29 +16,32 @@ export function SiteHeader({
   const showAuthedNav = signedIn || authed;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-[rgba(17,17,17,0.06)] bg-[#f7f5f2]/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        <AuraBrand href={showAuthedNav ? "/explore" : "/"} />
-        <nav className="flex items-center gap-4 text-sm text-[#6b6b6b]">
-          <Link href="/privacy" className="hover:text-[#111]">
+    <header
+      className="sticky top-0 z-30 border-b border-[var(--line-soft)] bg-[var(--bg)]/90 backdrop-blur-md"
+      style={{ paddingTop: "var(--safe-top)" }}
+    >
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 md:px-6">
+        <AuraBrand href={showAuthedNav ? "/" : "/"} />
+        <nav className="flex items-center gap-3 text-sm text-[var(--muted)] md:gap-4">
+          <Link href="/privacy" className="transition hover:text-[var(--ink)]">
             Privacy
           </Link>
-          <Link href="/terms" className="hover:text-[#111]">
+          <Link href="/terms" className="transition hover:text-[var(--ink)]">
             Terms
           </Link>
           {showAuthedNav ? (
             <>
-              <Link href="/explore" className="hover:text-[#111]">
+              <Link href="/" className="transition hover:text-[var(--ink)]">
                 Explore
               </Link>
-              <Link href="/settings" className="hover:text-[#111]">
+              <Link href="/settings" className="transition hover:text-[var(--ink)]">
                 Settings
               </Link>
               {authed && (
                 <button
                   type="button"
                   onClick={() => void signOut({ callbackUrl: "/" })}
-                  className="hover:text-[#111]"
+                  className="transition hover:text-[var(--ink)]"
                 >
                   Sign out
                 </button>
@@ -47,12 +50,12 @@ export function SiteHeader({
           ) : authReady ? (
             <Link
               href="/sign-in"
-              className="rounded-full bg-black px-4 py-2 text-white"
+              className="focus-ring rounded-full bg-[var(--ink)] px-4 py-2 text-white transition hover:bg-black"
             >
               Sign in
             </Link>
           ) : (
-            <Link href="/sign-in" className="text-[#111]">
+            <Link href="/sign-in" className="text-[var(--ink)] transition hover:opacity-80">
               Auth setup
             </Link>
           )}

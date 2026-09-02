@@ -34,12 +34,12 @@ export function VaultCard({ item }: { item: VaultItem }) {
   return (
     <Link
       href={`/vault/${encodeURIComponent(item.placeId)}`}
-      className="card-light group fade-up overflow-hidden rounded-[24px] transition hover:-translate-y-0.5 hover:shadow-lg"
+      className="card-light card-interactive group fade-up overflow-hidden rounded-[var(--radius-xl)]"
     >
       <div className={cn("relative aspect-[4/3] bg-gradient-to-br", gradientFor(item.placeId))}>
         {item.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <img src={item.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]" />
         ) : null}
         {rare ? (
           <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/80 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-white backdrop-blur">
@@ -47,20 +47,14 @@ export function VaultCard({ item }: { item: VaultItem }) {
           </span>
         ) : null}
       </div>
-      <div className="p-4">
+      <div className="p-4 md:p-5">
         <p className="kicker">{item.city}</p>
-        <h3 className="serif-italic mt-1 text-2xl leading-tight text-[#111]">{item.name}</h3>
-        <p className="mt-1 line-clamp-2 text-xs text-[#6b6b6b]">{item.address}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {item.rating ? (
-            <span className="rounded-full bg-black/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-[#2a2a2a]">
-              ★ {item.rating.toFixed(1)}
-            </span>
-          ) : null}
+        <h3 className="serif-italic mt-1.5 text-2xl leading-tight text-[var(--ink)]">{item.name}</h3>
+        <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-[var(--muted)]">{item.address}</p>
+        <div className="mt-3.5 flex flex-wrap gap-2">
+          {item.rating ? <span className="chip">★ {item.rating.toFixed(1)}</span> : null}
           {item.primaryType ? (
-            <span className="rounded-full bg-black/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-[#2a2a2a]">
-              {item.primaryType.replace(/_/g, " ")}
-            </span>
+            <span className="chip">{item.primaryType.replace(/_/g, " ")}</span>
           ) : null}
         </div>
       </div>

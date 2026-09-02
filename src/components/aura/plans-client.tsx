@@ -73,11 +73,11 @@ export function PlansClient() {
   return (
     <AppShell>
       <div className="py-6 md:py-10">
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <section className="card-light rounded-[28px] p-6">
+        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:gap-10">
+          <section className="card-light rounded-[var(--radius-xl)] p-6 md:p-7">
             <p className="kicker">New plan</p>
-            <h1 className="serif mt-2 text-4xl">Dates & party</h1>
-            <p className="mt-2 text-sm text-[#6b6b6b]">
+            <h1 className="page-title serif mt-2 text-4xl">Dates & party</h1>
+            <p className="page-lead mt-2.5">
               Create from city + dates. Itinerary & Open-Meteo climate generate on the detail page.
             </p>
             <div className="mt-6 space-y-3">
@@ -85,21 +85,10 @@ export function PlansClient() {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="City (e.g. New York)"
-                className="h-11 rounded-2xl bg-white"
               />
               <div className="grid grid-cols-2 gap-3">
-                <Input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="h-11 rounded-2xl bg-white"
-                />
-                <Input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="h-11 rounded-2xl bg-white"
-                />
+                <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
               </div>
               <Input
                 type="number"
@@ -107,7 +96,7 @@ export function PlansClient() {
                 max={12}
                 value={partySize}
                 onChange={(e) => setPartySize(Number(e.target.value) || 2)}
-                className="h-11 rounded-2xl bg-white"
+                aria-label="Party size"
               />
               <Button className="w-full" disabled={busy} onClick={() => void create()}>
                 {busy ? "Saving…" : "Create plan"}
@@ -117,7 +106,7 @@ export function PlansClient() {
 
           <section>
             <p className="kicker">Your plans</p>
-            <h2 className="serif-italic mt-2 text-3xl">Itineraries</h2>
+            <h2 className="serif-italic mt-2 text-3xl md:text-[2rem]">Itineraries</h2>
             <div className="mt-6 space-y-3">
               {loading ? (
                 <>
@@ -129,18 +118,23 @@ export function PlansClient() {
                   <Link
                     key={b._id}
                     href={`/plans/${b._id}`}
-                    className="card-light fade-up flex items-center justify-between gap-4 rounded-[22px] p-5 transition hover:-translate-y-0.5"
+                    className="card-light card-interactive fade-up flex items-center justify-between gap-4 rounded-[var(--radius-lg)] p-5"
                   >
                     <div>
-                      <p className="kicker">{b.city}{b.country ? ` · ${b.country}` : ""}</p>
-                      <h3 className="serif-italic mt-1 text-2xl">{b.title}</h3>
-                      <p className="mt-1 text-xs text-[#6b6b6b]">
+                      <p className="kicker">
+                        {b.city}
+                        {b.country ? ` · ${b.country}` : ""}
+                      </p>
+                      <h3 className="serif-italic mt-1.5 text-2xl leading-tight">{b.title}</h3>
+                      <p className="mt-1.5 text-xs leading-relaxed text-[var(--muted)]">
                         {b.startDate || "Dates unset"}
-                        {b.endDate ? ` → ${b.endDate}` : ""} · party of {b.partySize} · {b.placeCount || 0} vault
-                        places
+                        {b.endDate ? ` → ${b.endDate}` : ""} · party of {b.partySize} · {b.placeCount || 0}{" "}
+                        vault places
                       </p>
                     </div>
-                    <span className="text-[10px] uppercase tracking-[0.18em] text-[#6b6b6b]">Open →</span>
+                    <span className="shrink-0 text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
+                      Open →
+                    </span>
                   </Link>
                 ))
               ) : (

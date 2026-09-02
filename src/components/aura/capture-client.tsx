@@ -50,8 +50,8 @@ export function CaptureClient() {
     <AppShell>
       <div className="mx-auto max-w-2xl py-8 md:py-14">
         <p className="kicker text-center">Capture</p>
-        <h1 className="serif mt-2 text-center text-4xl md:text-5xl">Drop into The Vault</h1>
-        <p className="mx-auto mt-3 max-w-md text-center text-sm text-[#6b6b6b]">
+        <h1 className="page-title serif mt-2 text-center text-4xl md:text-5xl">Drop into The Vault</h1>
+        <p className="page-lead mx-auto mt-3 max-w-md text-center">
           Screenshots of Maps pins, IG stories, booking apps — or paste a public Maps / venue URL.
           Vision extracts what&apos;s visible; you confirm before save.
         </p>
@@ -67,15 +67,15 @@ export function CaptureClient() {
             setDrag(false);
             onFiles(e.dataTransfer.files);
           }}
-          className={`card-light mt-10 rounded-[32px] border-2 border-dashed p-8 text-center transition md:p-12 ${
-            drag ? "border-black bg-black/[0.03]" : "border-[rgba(17,17,17,0.12)]"
+          className={`card-light mt-10 rounded-[var(--radius-2xl)] border-2 border-dashed p-8 text-center transition md:p-12 ${
+            drag ? "border-[var(--ink)] bg-black/[0.03]" : "border-[var(--line-strong)]"
           }`}
         >
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-black text-white">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--ink)] text-white shadow-sm">
             <Upload className="h-6 w-6" />
           </div>
-          <p className="serif-italic mt-4 text-2xl">Drop screenshots</p>
-          <p className="mt-2 text-sm text-[#6b6b6b]">PNG / JPG · up to 4</p>
+          <p className="serif-italic mt-5 text-2xl md:text-[1.75rem]">Drop screenshots</p>
+          <p className="mt-2 text-sm text-[var(--muted)]">PNG / JPG · up to 4</p>
           <label className="mt-6 inline-flex cursor-pointer">
             <input
               type="file"
@@ -84,10 +84,12 @@ export function CaptureClient() {
               className="hidden"
               onChange={(e) => onFiles(e.target.files)}
             />
-            <span className="rounded-full bg-black px-5 py-2.5 text-sm text-white">Choose files</span>
+            <span className="focus-ring inline-flex min-h-[44px] items-center rounded-full bg-[var(--ink)] px-5 text-sm text-white transition hover:bg-black">
+              Choose files
+            </span>
           </label>
           {files.length ? (
-            <ul className="mt-4 space-y-1 text-xs text-[#6b6b6b]">
+            <ul className="mt-5 space-y-1.5 text-xs text-[var(--muted)]">
               {files.map((f) => (
                 <li key={f.name}>{f.name}</li>
               ))}
@@ -95,20 +97,20 @@ export function CaptureClient() {
           ) : null}
         </div>
 
-        <div className="mt-6 flex items-center gap-3">
-          <div className="h-px flex-1 bg-[rgba(17,17,17,0.08)]" />
-          <span className="text-[10px] uppercase tracking-[0.2em] text-[#6b6b6b]">or paste URL</span>
-          <div className="h-px flex-1 bg-[rgba(17,17,17,0.08)]" />
+        <div className="mt-7 flex items-center gap-3">
+          <div className="divider flex-1" />
+          <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">or paste URL</span>
+          <div className="divider flex-1" />
         </div>
 
         <div className="mt-6 flex gap-2">
           <div className="relative flex-1">
-            <Link2 className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6b6b6b]" />
+            <Link2 className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]" />
             <Input
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://maps.google.com/…"
-              className="h-12 rounded-full border-[rgba(17,17,17,0.1)] bg-white pl-11"
+              className="control-lg h-12 pl-11"
             />
           </div>
         </div>
@@ -116,7 +118,7 @@ export function CaptureClient() {
         <Button className="mt-8 w-full" size="lg" disabled={busy} onClick={() => void submit()}>
           {busy ? "Uploading…" : "Process capture"}
         </Button>
-        <p className="mt-4 text-center text-xs text-[#6b6b6b]">
+        <p className="mt-4 text-center text-xs leading-relaxed text-[var(--muted)]">
           Aura does not scrape Resy or OpenTable. Outbound booking links only.
         </p>
       </div>

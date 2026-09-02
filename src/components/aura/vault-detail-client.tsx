@@ -43,21 +43,21 @@ export function VaultDetailClient({ id }: { id: string }) {
   return (
     <AppShell>
       <div className="py-6 md:py-10">
-        <Link href="/vault" className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-[#6b6b6b]">
+        <Link href="/vault" className="back-link">
           <ArrowLeft className="h-3.5 w-3.5" /> Vault
         </Link>
 
         {err ? (
-          <p className="mt-8 text-[#8b3a2f]">{err}</p>
+          <p className="mt-8 text-[var(--skip)]">{err}</p>
         ) : !data ? (
           <div className="mt-8 space-y-4">
-            <Skeleton className="h-64 w-full rounded-[28px]" />
-            <Skeleton className="h-32 w-full rounded-[28px]" />
+            <Skeleton className="h-64 w-full rounded-[var(--radius-xl)]" />
+            <Skeleton className="h-32 w-full rounded-[var(--radius-xl)]" />
           </div>
         ) : (
           <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
-              <div className="overflow-hidden rounded-[28px] bg-gradient-to-br from-[#d9cfc4] to-[#6d635a]">
+              <div className="overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-br from-[#d9cfc4] to-[#6d635a]">
                 {data.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={data.imageUrl} alt="" className="aspect-[16/10] w-full object-cover" />
@@ -66,19 +66,19 @@ export function VaultDetailClient({ id }: { id: string }) {
                 )}
               </div>
               <p className="kicker mt-6">{data.board?.city || "Vault"}</p>
-              <h1 className="serif-italic mt-2 text-4xl md:text-5xl">{data.place.name}</h1>
-              <p className="mt-2 text-sm text-[#6b6b6b]">{data.place.formattedAddress}</p>
+              <h1 className="serif-italic mt-2 text-4xl leading-[1.05] md:text-5xl">{data.place.name}</h1>
+              <p className="mt-2 text-sm text-[var(--muted)]">{data.place.formattedAddress}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {data.place.rating ? (
-                  <span className="rounded-full bg-black/5 px-3 py-1 text-[10px] uppercase tracking-[0.14em]">
+                  <span className="rounded-full chip">
                     ★ {data.place.rating.toFixed(1)}
                   </span>
                 ) : null}
-                <span className="rounded-full bg-black/5 px-3 py-1 text-[10px] uppercase tracking-[0.14em]">
+                <span className="rounded-full chip">
                   {data.place.bookingPlatform}
                 </span>
                 {data.logistics.cached ? (
-                  <span className="rounded-full bg-black/5 px-3 py-1 text-[10px] uppercase tracking-[0.14em]">
+                  <span className="rounded-full chip">
                     Logistics cached
                   </span>
                 ) : null}
@@ -96,7 +96,7 @@ export function VaultDetailClient({ id }: { id: string }) {
                   </Button>
                 ) : null}
               </div>
-              <p className="mt-3 text-xs text-[#6b6b6b]">{data.copy}</p>
+              <p className="mt-3 text-xs text-[var(--muted)]">{data.copy}</p>
             </div>
 
             <div className="space-y-4">
@@ -105,13 +105,13 @@ export function VaultDetailClient({ id }: { id: string }) {
                 { label: "Pose direction", body: data.logistics.poseDirection },
                 { label: "Optimal setting", body: data.logistics.optimalSetting },
               ].map((block) => (
-                <article key={block.label} className="card-light rounded-[24px] p-5">
+                <article key={block.label} className="card-light rounded-[var(--radius-lg)] p-5">
                   <p className="kicker">{block.label}</p>
-                  <p className="mt-3 text-sm leading-relaxed text-[#2a2a2a]">{block.body}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">{block.body}</p>
                 </article>
               ))}
 
-              <article className="card-dark rounded-[24px] p-5">
+              <article className="card-dark rounded-[var(--radius-lg)] p-5">
                 <p className="kicker !text-white/50">Draft plan</p>
                 <h3 className="serif-italic mt-2 text-2xl text-white">
                   {data.draftPlan?.city || "Untitled"} · party of {data.draftPlan?.partySize || 2}

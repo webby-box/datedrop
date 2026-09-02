@@ -65,8 +65,8 @@ export function TasteChips({ editable = true }: { editable?: boolean }) {
                 disabled={!editable}
                 onClick={() => void toggle(tag)}
                 className={cn(
-                  "rounded-full px-3.5 py-2 text-[11px] font-medium uppercase tracking-[0.14em] transition",
-                  on ? "bg-black text-white" : "bg-black/5 text-[#6b6b6b] hover:bg-black/10",
+                  "focus-ring rounded-full px-3.5 py-2 text-[11px] font-medium uppercase tracking-[0.14em] transition",
+                  on ? "bg-black text-white" : "bg-black/[0.04] text-[var(--muted)] hover:bg-black/[0.08]",
                   !editable && "cursor-default",
                 )}
               >

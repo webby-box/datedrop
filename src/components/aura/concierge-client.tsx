@@ -49,18 +49,18 @@ export function ConciergeClient() {
       <div className="mx-auto flex max-w-3xl flex-col py-6 md:py-10" style={{ minHeight: "70vh" }}>
         <div>
           <p className="kicker">Concierge</p>
-          <h1 className="serif mt-2 text-4xl md:text-5xl">Ask Aura</h1>
-          <p className="mt-2 text-sm text-[#6b6b6b]">Vault-aware advice. Outbound booking only.</p>
+          <h1 className="page-title serif mt-2 text-4xl md:text-5xl">Ask Aura</h1>
+          <p className="page-lead mt-2.5">Vault-aware advice. Outbound booking only.</p>
         </div>
 
-        <div className="mt-6 flex-1 space-y-4 overflow-y-auto rounded-[28px] border border-[rgba(17,17,17,0.06)] bg-white/60 p-4 md:p-6">
+        <div className="mt-6 flex-1 space-y-3.5 overflow-y-auto rounded-[var(--radius-xl)] border border-[var(--line)] bg-white/70 p-4 shadow-[var(--shadow-card)] md:p-6">
           {messages.map((m, i) => (
             <div
               key={i}
-              className={`max-w-[90%] rounded-[22px] px-4 py-3 text-sm leading-relaxed ${
+              className={`max-w-[90%] rounded-[var(--radius-lg)] px-4 py-3 text-sm leading-relaxed ${
                 m.role === "user"
-                  ? "ml-auto bg-black text-white"
-                  : "card-light mr-auto text-[#2a2a2a]"
+                  ? "ml-auto bg-[var(--ink)] text-white shadow-sm"
+                  : "card-light mr-auto text-[var(--ink-soft)]"
               }`}
             >
               {m.role === "aura" ? <p className="kicker mb-2">Aura</p> : null}
@@ -70,7 +70,7 @@ export function ConciergeClient() {
         </div>
 
         <form
-          className="mt-4 flex gap-2"
+          className="mt-4 flex gap-2.5"
           onSubmit={(e) => {
             e.preventDefault();
             void send();
@@ -80,7 +80,7 @@ export function ConciergeClient() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="When should I book Lilia for next month?"
-            className="h-12 flex-1 rounded-full bg-white"
+            className="h-12 flex-1"
             disabled={busy}
           />
           <Button type="submit" disabled={busy} className="h-12 px-6">

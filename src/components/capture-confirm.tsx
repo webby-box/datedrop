@@ -87,21 +87,21 @@ export function CaptureConfirm({ id }: { id: string }) {
     return json;
   }
 
-  if (!cap) return <p className="px-5 py-16 text-[#6b6b6b]">Loading capture…</p>;
+  if (!cap) return <div className="px-1 py-10 md:px-0 md:py-12"><p className="kicker">Capture</p><p className="page-lead mt-3">Loading capture…</p></div>;
   if (cap.status === "processing") {
     return (
-      <div className="px-5 py-16">
+      <div className="px-1 py-10 md:px-0 md:py-12">
         <p className="kicker">Reading the chrome</p>
-        <h1 className="serif mt-2 text-4xl">Pin, rating row, bottom sheet…</h1>
-        <p className="mt-3 text-[#6b6b6b]">Vision model is extracting visible places only.</p>
+        <h1 className="page-title serif mt-2 text-4xl">Pin, rating row, bottom sheet…</h1>
+        <p className="page-lead mt-3">Vision model is extracting visible places only.</p>
       </div>
     );
   }
   if (cap.status === "failed") {
     return (
-      <div className="px-5 py-16">
-        <h1 className="serif text-4xl">Could not read this drop</h1>
-        <p className="mt-3 text-[#8b3a2f]">{cap.error}</p>
+      <div className="px-1 py-10 md:px-0 md:py-12">
+        <h1 className="page-title serif text-4xl">Could not read this drop</h1>
+        <p className="mt-3 text-[var(--skip)]">{cap.error}</p>
       </div>
     );
   }
@@ -113,36 +113,36 @@ export function CaptureConfirm({ id }: { id: string }) {
       <div>
         {cap.blobUrls[0] ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={cap.blobUrls[0]} alt="Dropped screenshot" className="card-light w-full rounded-md object-cover" />
+          <img src={cap.blobUrls[0]} alt="Dropped screenshot" className="card-light w-full rounded-[var(--radius-xl)] object-cover" />
         ) : (
-          <div className="card-light flex h-72 items-center justify-center text-[#6b6b6b]">URL capture — no image</div>
+          <div className="card-light flex h-72 items-center justify-center text-[var(--muted)]">URL capture — no image</div>
         )}
-        <p className="mt-4 text-sm text-[#6b6b6b]">{cap.extraction?.summary}</p>
+        <p className="mt-4 text-sm text-[var(--muted)]">{cap.extraction?.summary}</p>
       </div>
       <div>
         <p className="kicker">Confirm — never auto-saved</p>
-        <h1 className="serif mt-2 text-4xl">Is this the place?</h1>
-        {msg && <p className="mt-3 text-sm text-[#8b3a2f]">{msg}</p>}
+        <h1 className="page-title serif mt-2 text-4xl">Is this the place?</h1>
+        {msg && <p className="mt-3 text-sm text-[var(--skip)]">{msg}</p>}
         <div className="mt-6 space-y-8">
           {cands.map((c, ci) => (
-            <section key={`${c.name}-${ci}`} className="card-light rounded-2xl p-5">
+            <section key={`${c.name}-${ci}`} className="card-light rounded-[var(--radius-lg)] p-5">
               <div className="flex flex-wrap gap-2">
                 <Badge>{c.kind}</Badge>
                 <Badge>{c.sourceHint.replace("_", " ")}</Badge>
                 <Badge>{Math.round(c.confidence * 100)}%</Badge>
               </div>
-              <h2 className="serif mt-3 text-3xl">{c.name}</h2>
-              <p className="text-sm text-[#6b6b6b]">
+              <h2 className="serif-italic mt-3 text-3xl leading-tight">{c.name}</h2>
+              <p className="text-sm text-[var(--muted)]">
                 {[c.neighborhood, c.city, c.country].filter(Boolean).join(" · ")}
               </p>
-              <p className="mt-2 text-xs text-[#6b6b6b]">Cues: {c.cues.join(", ") || "none"}</p>
+              <p className="mt-2 text-xs text-[var(--muted)]">Cues: {c.cues.join(", ") || "none"}</p>
               <ul className="mt-4 space-y-2">
                 {(c.matches || []).slice(0, 3).map((m, mi) => (
-                  <li key={mid(m)} className="flex items-start justify-between gap-3 border-t border-[rgba(244,234,213,0.08)] py-3">
+                  <li key={mid(m)} className="flex items-start justify-between gap-3 border-t border-[var(--line)] py-3">
                     <div>
                       <p className="font-medium">{m.name}</p>
-                      <p className="text-sm text-[#6b6b6b]">{m.formattedAddress}</p>
-                      {m.rating ? <p className="text-xs text-[#111]">{m.rating} rating</p> : null}
+                      <p className="text-sm text-[var(--muted)]">{m.formattedAddress}</p>
+                      {m.rating ? <p className="text-xs text-[var(--ink)]">{m.rating} rating</p> : null}
                     </div>
                     <Button
                       size="sm"
@@ -161,7 +161,7 @@ export function CaptureConfirm({ id }: { id: string }) {
                 ))}
               </ul>
               {!c.matches?.length && (
-                <p className="mt-3 text-sm text-[#8a6a1f]">No place matches yet — search instead.</p>
+                <p className="mt-3 text-sm text-[var(--caution)]">No place matches yet — search instead.</p>
               )}
             </section>
           ))}
@@ -187,7 +187,7 @@ export function CaptureConfirm({ id }: { id: string }) {
               <li key={mid(m)} className="flex justify-between gap-3">
                 <div>
                   <p>{m.name}</p>
-                  <p className="text-sm text-[#6b6b6b]">{m.formattedAddress}</p>
+                  <p className="text-sm text-[var(--muted)]">{m.formattedAddress}</p>
                 </div>
                 <Button size="sm" onClick={() => void act({ action: "save", externalPlaceId: mid(m) })}>
                   Save

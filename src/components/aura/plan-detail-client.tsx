@@ -136,7 +136,7 @@ export function PlanDetailClient({ id }: { id: string }) {
   return (
     <AppShell>
       <div className="py-6 md:py-10">
-        <Link href="/plans" className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-[#6b6b6b]">
+        <Link href="/plans" className="back-link">
           <ArrowLeft className="h-3.5 w-3.5" /> Plans
         </Link>
 
@@ -151,9 +151,9 @@ export function PlanDetailClient({ id }: { id: string }) {
               <p className="kicker">{board.city}</p>
               <h1 className="serif-italic mt-2 text-4xl md:text-5xl">{board.title}</h1>
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="h-11 rounded-2xl bg-white" />
-                <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="h-11 rounded-2xl bg-white" />
-                <Input type="number" min={1} max={12} value={partySize} onChange={(e) => setPartySize(Number(e.target.value) || 2)} className="h-11 rounded-2xl bg-white" />
+                <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="bg-white" />
+                <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="bg-white" />
+                <Input type="number" min={1} max={12} value={partySize} onChange={(e) => setPartySize(Number(e.target.value) || 2)} className="bg-white" />
               </div>
               <div className="mt-4 flex flex-wrap gap-3">
                 <Button onClick={() => void generate()} disabled={busy}>
@@ -168,37 +168,37 @@ export function PlanDetailClient({ id }: { id: string }) {
 
               {plan ? (
                 <div className="mt-8 space-y-5">
-                  <article className="card-light rounded-[24px] p-5">
+                  <article className="card-light rounded-[var(--radius-lg)] p-5">
                     <p className="kicker">Seasonality · {plan.seasonality.verdict}</p>
                     <p className="mt-3 text-sm leading-relaxed">{plan.seasonality.prose}</p>
                     {!plan.seasonality.skipped ? (
-                      <p className="mt-2 text-xs text-[#6b6b6b]">
+                      <p className="mt-2 text-xs text-[var(--muted)]">
                         Highs {Math.round(plan.seasonality.meanMaxC)}°C / lows {Math.round(plan.seasonality.meanMinC)}°C · ~
                         {Math.round(plan.seasonality.precipMm)} mm · {attr}
                       </p>
                     ) : null}
                   </article>
-                  <article className="card-light rounded-[24px] p-5">
+                  <article className="card-light rounded-[var(--radius-lg)] p-5">
                     <p className="kicker">Intro</p>
                     <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed">{plan.bookingCopy}</p>
                   </article>
                   {plan.days.map((d) => (
-                    <article key={d.date} className="card-light rounded-[24px] p-5">
+                    <article key={d.date} className="card-light rounded-[var(--radius-lg)] p-5">
                       <p className="kicker">{d.date}</p>
                       <h3 className="serif-italic mt-1 text-2xl">{d.title}</h3>
                       <ul className="mt-3 space-y-2">
                         {d.items.map((i, idx) => (
                           <li key={idx} className="text-sm">
                             <span className="font-medium">{i.window}</span> — {i.name}
-                            {i.suggested ? <span className="text-[#6b6b6b]"> (suggested)</span> : null}
-                            <span className="block text-[#6b6b6b]">{i.note}</span>
+                            {i.suggested ? <span className="text-[var(--muted)]"> (suggested)</span> : null}
+                            <span className="block text-[var(--muted)]">{i.note}</span>
                           </li>
                         ))}
                       </ul>
                     </article>
                   ))}
                   {checklist.length ? (
-                    <article className="card-dark rounded-[24px] p-5">
+                    <article className="card-dark rounded-[var(--radius-lg)] p-5">
                       <p className="kicker !text-white/50">Open to book</p>
                       <ul className="mt-3 space-y-2">
                         {checklist.map((c) => (
@@ -214,12 +214,12 @@ export function PlanDetailClient({ id }: { id: string }) {
                   ) : null}
                 </div>
               ) : (
-                <p className="mt-8 text-sm text-[#6b6b6b]">Set dates, then generate an itinerary from vault places in this city.</p>
+                <p className="mt-8 text-sm text-[var(--muted)]">Set dates, then generate an itinerary from vault places in this city.</p>
               )}
             </div>
 
             <aside className="space-y-4">
-              <div className="card-light rounded-[28px] p-5">
+              <div className="card-light rounded-[var(--radius-xl)] p-5">
                 <p className="kicker">Map</p>
                 <div className="mt-3">
                   <BoardMap
@@ -228,7 +228,7 @@ export function PlanDetailClient({ id }: { id: string }) {
                   />
                 </div>
               </div>
-              <div className="card-light rounded-[28px] p-5">
+              <div className="card-light rounded-[var(--radius-xl)] p-5">
                 <p className="kicker">Vault places</p>
                 <ul className="mt-3 space-y-2">
                   {places.length ? (
@@ -243,7 +243,7 @@ export function PlanDetailClient({ id }: { id: string }) {
                       </li>
                     ))
                   ) : (
-                    <li className="text-sm text-[#6b6b6b]">
+                    <li className="text-sm text-[var(--muted)]">
                       No places yet. <Link href="/capture" className="underline">Capture</Link> into this city.
                     </li>
                   )}

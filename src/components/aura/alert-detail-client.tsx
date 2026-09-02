@@ -45,20 +45,20 @@ export function AlertDetailClient({ id }: { id: string }) {
   return (
     <AppShell live>
       <div className="py-6 md:py-10">
-        <Link href="/" className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-[#6b6b6b]">
+        <Link href="/" className="back-link">
           <ArrowLeft className="h-3.5 w-3.5" /> Explore
         </Link>
 
         {err ? (
-          <p className="mt-8 text-[#8b3a2f]">{err}</p>
+          <p className="mt-8 text-[var(--skip)]">{err}</p>
         ) : !data ? (
           <div className="mt-8 space-y-4">
-            <Skeleton className="h-56 w-full rounded-[28px]" />
-            <Skeleton className="h-40 w-full rounded-[28px]" />
+            <Skeleton className="h-56 w-full rounded-[var(--radius-xl)]" />
+            <Skeleton className="h-40 w-full rounded-[var(--radius-xl)]" />
           </div>
         ) : (
           <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="card-dark overflow-hidden rounded-[28px]">
+            <div className="card-dark overflow-hidden rounded-[var(--radius-xl)]">
               <div className="relative min-h-[240px] bg-gradient-to-br from-[#2a2420] to-[#0e0c0b] p-6 md:min-h-[320px] md:p-8">
                 {data.screenshot ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -77,11 +77,11 @@ export function AlertDetailClient({ id }: { id: string }) {
             </div>
 
             <div className="space-y-4">
-              <article className="card-light rounded-[24px] p-5">
+              <article className="card-light rounded-[var(--radius-lg)] p-5">
                 <p className="kicker">Why this alert</p>
                 <p className="mt-3 text-sm leading-relaxed">{data.alert.why}</p>
                 {data.alert.suggestedDates?.start ? (
-                  <p className="mt-3 text-xs uppercase tracking-[0.14em] text-[#6b6b6b]">
+                  <p className="mt-3 text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
                     Suggested · {data.alert.suggestedDates.start}
                     {data.alert.suggestedDates.end ? ` → ${data.alert.suggestedDates.end}` : ""}
                   </p>
@@ -90,15 +90,15 @@ export function AlertDetailClient({ id }: { id: string }) {
 
               {data.logistics ? (
                 <>
-                  <article className="card-light rounded-[24px] p-5">
+                  <article className="card-light rounded-[var(--radius-lg)] p-5">
                     <p className="kicker">Booking strategy</p>
                     <p className="mt-3 text-sm leading-relaxed">{data.logistics.bookingStrategy}</p>
                   </article>
-                  <article className="card-light rounded-[24px] p-5">
+                  <article className="card-light rounded-[var(--radius-lg)] p-5">
                     <p className="kicker">Pose direction</p>
                     <p className="mt-3 text-sm leading-relaxed">{data.logistics.poseDirection}</p>
                   </article>
-                  <article className="card-light rounded-[24px] p-5">
+                  <article className="card-light rounded-[var(--radius-lg)] p-5">
                     <p className="kicker">Optimal setting</p>
                     <p className="mt-3 text-sm leading-relaxed">{data.logistics.optimalSetting}</p>
                   </article>
