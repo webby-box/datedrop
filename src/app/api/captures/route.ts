@@ -72,18 +72,24 @@ export async function POST(req: Request) {
     }
 
     let source: "upload" | "maps_url" | "booking_url" = "upload";
+    let effectiveUrl = pastedUrl;
     if (pastedUrl) {
       const parsed = classifyUrl(pastedUrl);
       if (!parsed) {
-        return NextResponse.json(
-          {
-            error:
-              "That URL is not a supported Maps or public venue link. Paste google.com/maps, maps.app.goo.gl, Resy, OpenTable, or Tock public pages — we do not fetch live slot grids.",
-          },
-          { status: 400 },
-        );
+        if (!files.length) {
+          return NextResponse.json(
+            {
+              error:
+                "That URL is not a supported Maps or public venue link. Paste google.com/maps, maps.google.com, maps.app.goo.gl, Resy, OpenTable, or Tock public pages — we do not fetch live slot grids.",
+            },
+            { status: 400 },
+          );
+        }
+        warnings.push("Ignored unsupported URL — processing screenshot(s) only.");
+        effectiveUrl = "";
+      } else {
+        source = parsed.source;
       }
-      source = parsed.source;
     }
 
     const col = await captures();
@@ -93,7 +99,7 @@ export async function POST(req: Request) {
       status: "processing",
       blobUrls,
       source,
-      pastedUrl: pastedUrl || undefined,
+      pastedUrl: effectiveUrl || undefined,
       createdAt: now,
       updatedAt: now,
     });

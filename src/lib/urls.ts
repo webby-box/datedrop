@@ -22,7 +22,12 @@ export function classifyUrl(raw: string): ParsedPaste | null {
   const host = u.hostname.replace(/^www\./, "").toLowerCase();
   const path = u.pathname + u.search;
 
-  if (host === "maps.app.goo.gl" || host === "goo.gl" || host.endsWith("google.com") && path.includes("/maps")) {
+  const isGoogleMaps =
+    host === "maps.app.goo.gl" ||
+    host === "goo.gl" ||
+    host === "maps.google.com" ||
+    ((host === "google.com" || host.endsWith(".google.com")) && path.includes("/maps"));
+  if (isGoogleMaps) {
     const q = u.searchParams.get("q") || u.searchParams.get("query");
     const place = path.match(/\/maps\/place\/([^/]+)/);
     const name = q ? decodePlus(q) : place ? decodePlus(place[1]) : "Google Maps place";
