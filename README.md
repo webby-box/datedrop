@@ -12,7 +12,7 @@ ReciMe, for places — not a travel super-app.
 | --- | --- |
 | Places | **Geoapify** (primary) → **LocationIQ** → public **Nominatim** (1 req/s, cached) |
 | Map UI | **MapLibre GL** + **OpenFreeMap** (`styles/dark` or `styles/liberty`) via `react-map-gl` |
-| Vision LLM | **Groq** → **OpenRouter** (`google/gemma-4-31b-it:free` → `openrouter/free`) → **Gemini** |
+| Vision LLM | **Groq** → **OpenRouter** (`minimax/minimax-m3:free` → `google/gemma-4-31b-it:free` → `openrouter/free`) → **Gemini** |
 | Auth | Auth.js Google Sign-In (demo-local if OAuth missing) |
 | Weather | Open-Meteo archive (free) |
 | Database | MongoDB Atlas |

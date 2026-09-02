@@ -3,8 +3,11 @@ import type { Candidate, Extraction, LlmProvider, SourceHint } from "./types";
 const GEMINI_MODEL = "gemini-2.5-flash";
 const GROQ_VISION_MODEL = process.env.GROQ_VISION_MODEL || "qwen/qwen3.6-27b";
 const OPENROUTER_VISION_MODEL =
-  process.env.OPENROUTER_VISION_MODEL || "google/gemma-4-31b-it:free";
-const OPENROUTER_FALLBACK_MODEL = "openrouter/free";
+  process.env.OPENROUTER_VISION_MODEL || "minimax/minimax-m3:free";
+const OPENROUTER_FALLBACK_MODELS = [
+  "google/gemma-4-31b-it:free",
+  "openrouter/free",
+] as const;
 
 const SYSTEM = `You extract places from screenshots for DateDrop.
 DateDrop is ReciMe-for-places: people drop screenshots of restaurants and trips.
@@ -212,13 +215,16 @@ async function extractWithOpenRouter(
       },
     })),
   ];
-  const models = [OPENROUTER_VISION_MODEL, OPENROUTER_FALLBACK_MODEL].filter(
+  const models = [OPENROUTER_VISION_MODEL, ...OPENROUTER_FALLBACK_MODELS].filter(
     (m, i, arr) => arr.indexOf(m) === i,
   );
   const errors: string[] = [];
   for (const model of models) {
     try {
       const text = await openRouterChat(key, model, content, 0.2, true);
+      if (!text || !String(text).trim()) {
+        throw new Error(`OpenRouter model ${model} returned empty content`);
+      }
       return parseJson(text);
     } catch (err) {
       errors.push((err as Error).message);
@@ -346,7 +352,7 @@ async function groqText(prompt: string): Promise<string | null> {
 async function openRouterText(prompt: string): Promise<string | null> {
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) return null;
-  const models = [OPENROUTER_VISION_MODEL, OPENROUTER_FALLBACK_MODEL].filter(
+  const models = [OPENROUTER_VISION_MODEL, ...OPENROUTER_FALLBACK_MODELS].filter(
     (m, i, arr) => arr.indexOf(m) === i,
   );
   for (const model of models) {
