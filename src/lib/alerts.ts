@@ -33,21 +33,46 @@ function tasteTagFor(p: PlaceRecord, city: string) {
 async function upsertAlert(partial: Omit<AlertRecord, "_id" | "createdAt" | "updatedAt" | "read"> & { read?: boolean }) {
   const col = await alerts();
   const now = new Date();
+  // Avoid Mongo path conflicts: fields must not appear in both $setOnInsert and $set.
+  const {
+    title,
+    subtitle,
+    body,
+    why,
+    imageUrl,
+    suggestedDates,
+    placeName,
+    address,
+    deepLinkLabel,
+    placeId,
+    boardId,
+    kind,
+    userId,
+    fingerprint,
+    read,
+  } = partial;
   await col.updateOne(
-    { userId: partial.userId, fingerprint: partial.fingerprint },
+    { userId, fingerprint },
     {
       $setOnInsert: {
-        ...partial,
-        read: partial.read ?? false,
+        userId,
+        fingerprint,
+        kind,
+        placeId,
+        boardId,
+        deepLinkLabel,
+        read: read ?? false,
         createdAt: now,
       },
       $set: {
-        title: partial.title,
-        subtitle: partial.subtitle,
-        body: partial.body,
-        why: partial.why,
-        imageUrl: partial.imageUrl,
-        suggestedDates: partial.suggestedDates,
+        title,
+        subtitle,
+        body,
+        why,
+        imageUrl,
+        suggestedDates,
+        placeName,
+        address,
         updatedAt: now,
       },
     },
