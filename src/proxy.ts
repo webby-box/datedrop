@@ -3,6 +3,13 @@ import { auth } from "@/auth";
 import { googleAuthConfigured } from "@/lib/env";
 
 const PREFIXES = [
+  "/explore",
+  "/vault",
+  "/capture",
+  "/plans",
+  "/premium",
+  "/alerts",
+  "/concierge",
   "/inbox",
   "/captures",
   "/boards",
@@ -12,9 +19,14 @@ const PREFIXES = [
   "/api/boards",
   "/api/places",
   "/api/settings",
+  "/api/alerts",
+  "/api/vault",
+  "/api/concierge",
+  "/api/taste",
 ];
 
 function isProtected(pathname: string) {
+  if (pathname === "/") return true;
   return PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
@@ -28,7 +40,6 @@ const withAuth = auth((req) => {
 });
 
 export default function proxy(req: NextRequest, evt: unknown) {
-  // Demo-local mode: Google OAuth env missing → allow through.
   if (!googleAuthConfigured()) return NextResponse.next();
   return withAuth(req, evt as never);
 }

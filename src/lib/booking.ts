@@ -1,7 +1,7 @@
 import type { BookingPlatform } from "./types";
 
 export const NO_INVENTORY_COPY =
-  "We identify the place and open the booking site. We don't have live table inventory.";
+  "Aura identifies the place and opens the booking site. We don't have live table inventory.";
 
 export type DeepLink = {
   platform: BookingPlatform;
@@ -30,7 +30,7 @@ export function bookingDeepLink(opts: {
       const u = new URL(site);
       u.searchParams.set("date", date);
       u.searchParams.set("seats", String(seats));
-      return { platform: "resy", url: u.toString(), label: "Book on Resy" };
+      return { platform: "resy", url: u.toString(), label: "Open to book on Resy" };
     }
     return {
       platform: "resy",
@@ -45,7 +45,7 @@ export function bookingDeepLink(opts: {
       return {
         platform: "opentable",
         url: `https://www.opentable.com/r/${slug}?covers=${seats}&dateTime=${encodeURIComponent(date + "T19:00")}`,
-        label: "Book on OpenTable",
+        label: "Open to book on OpenTable",
       };
     }
     return {
@@ -56,7 +56,7 @@ export function bookingDeepLink(opts: {
   }
 
   if (opts.platform === "tock" || /tock\.com|exploretock/.test(site)) {
-    if (site) return { platform: "tock", url: site, label: "Book on Tock" };
+    if (site) return { platform: "tock", url: site, label: "Open to book on Tock" };
     return {
       platform: "tock",
       url: `https://www.exploretock.com/search?q=${q}`,
@@ -65,7 +65,7 @@ export function bookingDeepLink(opts: {
   }
 
   if (opts.platform === "sevenrooms" && site) {
-    return { platform: "sevenrooms", url: site, label: "Book on SevenRooms" };
+    return { platform: "sevenrooms", url: site, label: "Open SevenRooms" };
   }
 
   if (site) {
@@ -81,7 +81,7 @@ export function bookingDeepLink(opts: {
 
 export function bookingWindowCopy(opts: { date?: string; city?: string; restaurant?: boolean }) {
   if (!opts.date) {
-    return "Set a date range on this board. Popular rooms often open 7, 14, or 30 days out — we send you to the booking site; we never show fake time slots.";
+    return "Set target dates on a plan. Popular rooms often open 7, 14, or 30 days out — Aura sends you to the booking site; we never show fake time slots.";
   }
-  return `For ${opts.date}${opts.city ? ` in ${opts.city}` : ""}, check the booking site's calendar. DateDrop does not read live availability and will not snipe or hold a table.`;
+  return `For ${opts.date}${opts.city ? ` in ${opts.city}` : ""}, check the booking site's calendar. Aura does not read live availability and will not snipe or hold a table.`;
 }

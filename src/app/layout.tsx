@@ -1,29 +1,43 @@
-import type { Metadata } from "next";
-import { Instrument_Serif, Outfit } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Newsreader, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 
-const outfit = Outfit({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  variable: "--font-geist",
 });
 
-const serif = Instrument_Serif({
+const newsreader = Newsreader({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-instrument",
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-newsreader",
 });
 
 export const metadata: Metadata = {
-  title: "DateDrop — Drop a screenshot. Pick a date. Know if you can go.",
+  title: "Aura Concierge Elite",
   description:
-    "Drop screenshots of restaurants and trips. DateDrop figures out where they are, whether your dates actually work, and hands you the booking links.",
+    "Luxury travel and dining concierge. Capture places from screenshots, vault them, and receive proactive booking-window alerts — without live table scraping.",
+  applicationName: "Aura Concierge Elite",
+  appleWebApp: {
+    capable: true,
+    title: "Aura",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#f7f5f2",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${outfit.variable} ${serif.variable} antialiased`}>
+      <body className={`${inter.variable} ${newsreader.variable} antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -9,8 +9,8 @@ const OPENROUTER_FALLBACK_MODELS = [
   "openrouter/free",
 ] as const;
 
-const SYSTEM = `You extract places from screenshots for DateDrop.
-DateDrop is ReciMe-for-places: people drop screenshots of restaurants and trips.
+const SYSTEM = `You extract places from screenshots for Aura.
+Aura is a luxury travel and dining concierge: people drop screenshots of restaurants and trips.
 
 Return ONLY JSON matching:
 { "summary": string, "candidates": [{ "kind": "restaurant"|"place"|"destination"|"unknown", "name": string, "city": string|null, "neighborhood": string|null, "country": string|null, "cues": string[], "confidence": number, "sourceHint": "google_maps"|"apple_maps"|"instagram"|"tiktok"|"resy"|"opentable"|"tock"|"tripadvisor"|"other" }] }
@@ -179,7 +179,7 @@ async function openRouterChat(
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
       "HTTP-Referer": process.env.AUTH_URL || "https://datedrop.app",
-      "X-Title": "DateDrop",
+      "X-Title": "Aura",
     },
     body: JSON.stringify(body),
   });
@@ -422,9 +422,29 @@ export async function writeItineraryProse(input: {
   places: { name: string; neighborhood?: string }[];
 }): Promise<string> {
   const names = input.places.map((p) => p.name).join(", ");
-  const fallback = `${input.city} · ${input.dates} · party of ${input.partySize}. Cluster ${names} by walking distance. Book on the provider sites — DateDrop does not hold tables.`;
+  const fallback = `${input.city} · ${input.dates} · party of ${input.partySize}. Cluster ${names} by walking distance. Book on the provider sites — Aura does not hold tables.`;
   return proseWithFallback(
     `One paragraph itinerary intro for a date-night / trip board. City ${input.city}, ${input.dates}, party of ${input.partySize}. Places (from THIS user's screenshots only): ${names}. Do not add famous restaurants they did not save. Mention they book on Resy/OpenTable/Tock themselves.`,
     fallback,
   );
+}
+
+
+export async function conciergeChat(opts: {
+  message: string;
+  context: string;
+}): Promise<string> {
+  const fallback =
+    "I can advise from your vault and plans — booking windows, climate, and logistics. Aura never scrapes live tables; open the provider link when you are ready to book.";
+  if (process.env.MOCK_AI === "1") {
+    return `Aura here. Based on your vault: ${opts.context.slice(0, 280) || "no places yet"}. ${fallback}`;
+  }
+  const prompt = `You are Aura, the Concierge Elite AI for a luxury travel/dining app.
+Answer helpfully in 2-5 short paragraphs. Use ONLY the user's vault/plans context below. Never invent live Resy/OpenTable availability. Never claim you booked a table. Suggest outbound booking when relevant.
+
+Context:
+${opts.context}
+
+User: ${opts.message}`;
+  return proseWithFallback(prompt, fallback);
 }

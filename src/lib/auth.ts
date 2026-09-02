@@ -10,7 +10,7 @@ export type AppUser = {
 
 export async function currentUserSafe(): Promise<AppUser | null> {
   if (!googleAuthConfigured()) {
-    return { userId: "demo-local", email: "demo@datedrop.local", demo: true };
+    return { userId: "demo-local", email: "demo@aura.local", demo: true };
   }
   try {
     const { auth } = await import("@/auth");

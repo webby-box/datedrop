@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export function DeleteData() {
   const [msg, setMsg] = useState<string | null>(null);
   async function run() {
-    if (!confirm("Delete all of your DateDrop captures, boards, and plans?")) return;
+    if (!confirm("Delete all of your Aura captures, boards, and plans?")) return;
     const res = await fetch("/api/settings/delete", { method: "POST" });
     const json = await res.json();
     setMsg(json.ok ? "Deleted. Your inbox is empty." : json.error);
@@ -14,15 +14,15 @@ export function DeleteData() {
   return (
     <div className="mt-12 border-t border-[rgba(244,234,213,0.08)] pt-8">
       <h2 className="serif text-2xl">Delete my data</h2>
-      <p className="mt-2 text-sm text-[#9a8f7e]">
-        Removes captures, boards, board places, plans, and your DateDrop user row. Your Google
-        account is separate — revoke DateDrop access in your Google account settings if you want
+      <p className="mt-2 text-sm text-[#6b6b6b]">
+        Removes captures, boards, board places, plans, and your Aura user row. Your Google
+        account is separate — revoke Aura access in your Google account settings if you want
         the OAuth grant gone too.
       </p>
       <Button variant="outline" className="mt-4" onClick={() => void run()}>
         Delete my data
       </Button>
-      {msg && <p className="mt-3 text-sm text-[#d4a574]">{msg}</p>}
+      {msg && <p className="mt-3 text-sm text-[#111]">{msg}</p>}
     </div>
   );
 }

@@ -15,6 +15,7 @@ export type UserRecord = {
   _id?: ObjectId;
   userId: string;
   email?: string;
+  tasteProfiles?: string[];
   createdAt: Date;
 };
 
@@ -48,10 +49,8 @@ export type CaptureRecord = {
 
 export type PlaceRecord = {
   _id?: ObjectId;
-  /** Provider-stable id (Geoapify / LocationIQ / Nominatim / Google). */
   externalPlaceId: string;
   provider: PlacesProvider;
-  /** @deprecated legacy Google Places id — still read for old documents */
   googlePlaceId?: string;
   name: string;
   formattedAddress: string;
@@ -81,6 +80,7 @@ export type BoardPlaceRecord = {
   notes?: string;
   sourceScreenshotUrl?: string;
   status: BoardPlaceStatus;
+  tasteTags?: string[];
   createdAt: Date;
 };
 
@@ -95,6 +95,43 @@ export type PlanRecord = {
   bookingCopy: string;
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type AlertKind =
+  | "booking_window"
+  | "rare_finding"
+  | "seasonality"
+  | "preference_match";
+
+export type AlertRecord = {
+  _id?: ObjectId;
+  userId: string;
+  kind: AlertKind;
+  title: string;
+  subtitle: string;
+  body: string;
+  placeId?: string;
+  boardId?: string;
+  placeName?: string;
+  address?: string;
+  imageUrl?: string;
+  deepLinkLabel?: string;
+  why: string;
+  suggestedDates?: { start?: string; end?: string };
+  read: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  fingerprint: string;
+};
+
+export type VenueLogisticsRecord = {
+  _id?: ObjectId;
+  userId: string;
+  placeId: string;
+  bookingStrategy: string;
+  poseDirection: string;
+  optimalSetting: string;
+  generatedAt: Date;
 };
 
 export async function users(): Promise<Collection<OptionalId<UserRecord>>> {
@@ -114,4 +151,10 @@ export async function boardPlaces(): Promise<Collection<OptionalId<BoardPlaceRec
 }
 export async function plans(): Promise<Collection<OptionalId<PlanRecord>>> {
   return (await getDb()).collection("plans");
+}
+export async function alerts(): Promise<Collection<OptionalId<AlertRecord>>> {
+  return (await getDb()).collection("alerts");
+}
+export async function venueLogistics(): Promise<Collection<OptionalId<VenueLogisticsRecord>>> {
+  return (await getDb()).collection("venueLogistics");
 }

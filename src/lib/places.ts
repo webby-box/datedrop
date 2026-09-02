@@ -2,7 +2,7 @@ import type { BookingPlatform, NormalizedPlace, PlaceMatch, PlacesProvider } fro
 import type { PlaceRecord } from "./models";
 import { places as placesCol } from "./models";
 
-const NOMINATIM_UA = "DateDrop/1.0 (https://github.com/webby-box/datedrop)";
+const NOMINATIM_UA = "Aura/1.0 (https://github.com/webby-box/datedrop)";
 const NOMINATIM_MIN_INTERVAL_MS = 1100;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 

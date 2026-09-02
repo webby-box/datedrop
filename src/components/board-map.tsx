@@ -6,15 +6,18 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 type Pin = { lat: number; lng: number; name: string };
 
-const STYLE = "https://tiles.openfreemap.org/styles/liberty";
+const STYLE = "https://tiles.openfreemap.org/styles/dark";
 
 export function BoardMap({
   pins,
   attribution,
+  className,
+  heightClass = "h-72",
 }: {
   pins: Pin[];
-  /** Extra places-provider line, e.g. "Powered by Geoapify". */
   attribution?: string;
+  className?: string;
+  heightClass?: string;
 }) {
   const center = useMemo(() => {
     if (!pins.length) return { latitude: 40.73, longitude: -73.99, zoom: 11 };
@@ -25,7 +28,7 @@ export function BoardMap({
 
   if (!pins.length) {
     return (
-      <div className="ticket flex h-72 items-center justify-center rounded-2xl text-[#9a8f7e]">
+      <div className={`card-light flex ${heightClass} items-center justify-center rounded-3xl text-[#6b6b6b]`}>
         Save a confirmed place to drop a pin.
       </div>
     );
@@ -36,8 +39,8 @@ export function BoardMap({
     : "© OpenStreetMap contributors · OpenFreeMap";
 
   return (
-    <div>
-      <div className="h-72 w-full overflow-hidden rounded-2xl border border-[rgba(244,234,213,0.12)]">
+    <div className={className}>
+      <div className={`${heightClass} w-full overflow-hidden rounded-3xl border border-[rgba(17,17,17,0.08)]`}>
         <Map
           initialViewState={center}
           mapStyle={STYLE}
@@ -49,7 +52,7 @@ export function BoardMap({
             <Marker key={`${p.lat},${p.lng},${p.name}`} longitude={p.lng} latitude={p.lat} anchor="bottom">
               <div
                 title={p.name}
-                className="h-3 w-3 rounded-full border-2 border-[#0c0b09] bg-[#c45c26] shadow-lg"
+                className="h-3 w-3 rounded-full border-2 border-white bg-white shadow-lg"
               />
             </Marker>
           ))}

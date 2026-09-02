@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 type Match = {
   externalPlaceId?: string;
@@ -73,17 +74,26 @@ export function CaptureConfirm({ id }: { id: string }) {
       setMsg(json.error);
       return json;
     }
-    if (json.boardId) router.push(`/boards/${json.boardId}`);
+    if (json.placeId) {
+      toast.success("Saved to The Vault");
+      router.push(`/vault/${encodeURIComponent(json.placeId)}`);
+      return json;
+    }
+    if (json.boardId) {
+      toast.success("Saved to The Vault");
+      router.push("/vault");
+      return json;
+    }
     return json;
   }
 
-  if (!cap) return <p className="px-5 py-16 text-[#9a8f7e]">Loading capture…</p>;
+  if (!cap) return <p className="px-5 py-16 text-[#6b6b6b]">Loading capture…</p>;
   if (cap.status === "processing") {
     return (
       <div className="px-5 py-16">
         <p className="kicker">Reading the chrome</p>
         <h1 className="serif mt-2 text-4xl">Pin, rating row, bottom sheet…</h1>
-        <p className="mt-3 text-[#9a8f7e]">Vision model is extracting visible places only.</p>
+        <p className="mt-3 text-[#6b6b6b]">Vision model is extracting visible places only.</p>
       </div>
     );
   }
@@ -91,7 +101,7 @@ export function CaptureConfirm({ id }: { id: string }) {
     return (
       <div className="px-5 py-16">
         <h1 className="serif text-4xl">Could not read this drop</h1>
-        <p className="mt-3 text-[#b5523a]">{cap.error}</p>
+        <p className="mt-3 text-[#8b3a2f]">{cap.error}</p>
       </div>
     );
   }
@@ -103,36 +113,36 @@ export function CaptureConfirm({ id }: { id: string }) {
       <div>
         {cap.blobUrls[0] ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={cap.blobUrls[0]} alt="Dropped screenshot" className="polaroid w-full rounded-md object-cover" />
+          <img src={cap.blobUrls[0]} alt="Dropped screenshot" className="card-light w-full rounded-md object-cover" />
         ) : (
-          <div className="polaroid flex h-72 items-center justify-center text-[#9a8f7e]">URL capture — no image</div>
+          <div className="card-light flex h-72 items-center justify-center text-[#6b6b6b]">URL capture — no image</div>
         )}
-        <p className="mt-4 text-sm text-[#9a8f7e]">{cap.extraction?.summary}</p>
+        <p className="mt-4 text-sm text-[#6b6b6b]">{cap.extraction?.summary}</p>
       </div>
       <div>
         <p className="kicker">Confirm — never auto-saved</p>
         <h1 className="serif mt-2 text-4xl">Is this the place?</h1>
-        {msg && <p className="mt-3 text-sm text-[#b5523a]">{msg}</p>}
+        {msg && <p className="mt-3 text-sm text-[#8b3a2f]">{msg}</p>}
         <div className="mt-6 space-y-8">
           {cands.map((c, ci) => (
-            <section key={`${c.name}-${ci}`} className="ticket rounded-2xl p-5">
+            <section key={`${c.name}-${ci}`} className="card-light rounded-2xl p-5">
               <div className="flex flex-wrap gap-2">
                 <Badge>{c.kind}</Badge>
                 <Badge>{c.sourceHint.replace("_", " ")}</Badge>
                 <Badge>{Math.round(c.confidence * 100)}%</Badge>
               </div>
               <h2 className="serif mt-3 text-3xl">{c.name}</h2>
-              <p className="text-sm text-[#9a8f7e]">
+              <p className="text-sm text-[#6b6b6b]">
                 {[c.neighborhood, c.city, c.country].filter(Boolean).join(" · ")}
               </p>
-              <p className="mt-2 text-xs text-[#9a8f7e]">Cues: {c.cues.join(", ") || "none"}</p>
+              <p className="mt-2 text-xs text-[#6b6b6b]">Cues: {c.cues.join(", ") || "none"}</p>
               <ul className="mt-4 space-y-2">
                 {(c.matches || []).slice(0, 3).map((m, mi) => (
                   <li key={mid(m)} className="flex items-start justify-between gap-3 border-t border-[rgba(244,234,213,0.08)] py-3">
                     <div>
                       <p className="font-medium">{m.name}</p>
-                      <p className="text-sm text-[#9a8f7e]">{m.formattedAddress}</p>
-                      {m.rating ? <p className="text-xs text-[#d4a574]">{m.rating} rating</p> : null}
+                      <p className="text-sm text-[#6b6b6b]">{m.formattedAddress}</p>
+                      {m.rating ? <p className="text-xs text-[#111]">{m.rating} rating</p> : null}
                     </div>
                     <Button
                       size="sm"
@@ -151,7 +161,7 @@ export function CaptureConfirm({ id }: { id: string }) {
                 ))}
               </ul>
               {!c.matches?.length && (
-                <p className="mt-3 text-sm text-[#c9a227]">No place matches yet — search instead.</p>
+                <p className="mt-3 text-sm text-[#8a6a1f]">No place matches yet — search instead.</p>
               )}
             </section>
           ))}
@@ -169,7 +179,7 @@ export function CaptureConfirm({ id }: { id: string }) {
           }}
         >
           <Input placeholder="Search places instead" value={q} onChange={(e) => setQ(e.target.value)} />
-          <Button type="submit" variant="amber">Search</Button>
+          <Button type="submit" variant="default">Search</Button>
         </form>
         {searchHits && (
           <ul className="mt-4 space-y-2">
@@ -177,7 +187,7 @@ export function CaptureConfirm({ id }: { id: string }) {
               <li key={mid(m)} className="flex justify-between gap-3">
                 <div>
                   <p>{m.name}</p>
-                  <p className="text-sm text-[#9a8f7e]">{m.formattedAddress}</p>
+                  <p className="text-sm text-[#6b6b6b]">{m.formattedAddress}</p>
                 </div>
                 <Button size="sm" onClick={() => void act({ action: "save", externalPlaceId: mid(m) })}>
                   Save

@@ -68,8 +68,8 @@ export function BoardClient({
     });
   }
 
-  if (err) return <p className="px-5 py-16 text-[#b5523a]">{err}</p>;
-  if (!data) return <p className="px-5 py-16 text-[#9a8f7e]">Loading board…</p>;
+  if (err) return <p className="px-5 py-16 text-[#8b3a2f]">{err}</p>;
+  if (!data) return <p className="px-5 py-16 text-[#6b6b6b]">Loading board…</p>;
 
   const groups = new Map<string, Place[]>();
   for (const p of data.places) {
@@ -81,7 +81,7 @@ export function BoardClient({
     <div className="mx-auto max-w-6xl px-5 py-10">
       <p className="kicker">Board</p>
       <h1 className="serif mt-2 text-5xl">{data.board.title}</h1>
-      <p className="mt-2 text-[#9a8f7e]">Grouped by city from confirmed places — not a guess.</p>
+      <p className="mt-2 text-[#6b6b6b]">Grouped by city from confirmed places — not a guess.</p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_280px]">
         <BoardMap
@@ -89,27 +89,27 @@ export function BoardClient({
           pins={data.places.map((p) => ({ lat: p.lat, lng: p.lng, name: p.name }))}
         />
         <form
-          className="ticket space-y-3 rounded-2xl p-5"
+          className="card-light space-y-3 rounded-2xl p-5"
           onSubmit={(e) => {
             e.preventDefault();
             void saveDates();
           }}
         >
           <p className="kicker">When</p>
-          <label className="block text-xs text-[#9a8f7e]">
+          <label className="block text-xs text-[#6b6b6b]">
             Start
             <Input type="date" value={start} onChange={(e) => setStart(e.target.value)} />
           </label>
-          <label className="block text-xs text-[#9a8f7e]">
+          <label className="block text-xs text-[#6b6b6b]">
             End
             <Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} />
           </label>
-          <label className="block text-xs text-[#9a8f7e]">
+          <label className="block text-xs text-[#6b6b6b]">
             Party size
             <Input type="number" min={1} max={20} value={party} onChange={(e) => setParty(Number(e.target.value))} />
           </label>
           <Button type="submit" className="w-full">Save dates</Button>
-          <Link href={`/boards/${id}/plan`} className="block text-center text-sm text-[#d4a574]">
+          <Link href={`/boards/${id}/plan`} className="block text-center text-sm text-[#111]">
             Open plan →
           </Link>
         </form>
@@ -118,7 +118,7 @@ export function BoardClient({
       {[...groups.entries()].map(([g, places]) => (
         <section key={g} className="mt-10">
           <h2 className="serif text-3xl">{g}</h2>
-          <ul className="mt-4 divide-y divide-[rgba(244,234,213,0.08)]">
+          <ul className="mt-4 divide-y divide-[rgba(17,17,17,0.08)]">
             {places.map((p) => {
               const book = bookingDeepLink({
                 name: p.name,
@@ -134,9 +134,9 @@ export function BoardClient({
                     <Link href={`/places/${encodeURIComponent(key)}`} className="serif text-2xl">
                       {p.name}
                     </Link>
-                    <p className="text-sm text-[#9a8f7e]">{p.formattedAddress}</p>
+                    <p className="text-sm text-[#6b6b6b]">{p.formattedAddress}</p>
                   </div>
-                  <a href={book.url} target="_blank" rel="noreferrer" className="text-sm text-[#d4a574]">
+                  <a href={book.url} target="_blank" rel="noreferrer" className="text-sm text-[#111]">
                     {book.label} ↗
                   </a>
                 </li>
@@ -158,7 +158,7 @@ export function BoardClient({
         </section>
       ) : null}
 
-      <p className="mt-10 max-w-xl text-sm text-[#9a8f7e]">{NO_INVENTORY_COPY}</p>
+      <p className="mt-10 max-w-xl text-sm text-[#6b6b6b]">{NO_INVENTORY_COPY}</p>
     </div>
   );
 }

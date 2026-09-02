@@ -1,30 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0c0b09;
-  --bg-2: #14120e;
-  --ink: #f4ead5;
-  --muted: #9a8f7e;
-  --line: rgba(244, 234, 213, 0.12);
-  --amber: #d4a574;
-  --rust: #c45c26;
-  --go: #7d9a6a;
-  --caution: #c9a227;
-  --skip: #b5523a;
-  --serif: var(--font-instrument), "Instrument Serif", serif;
-  --sans: var(--font-outfit), "Outfit", sans-serif;
+  --bg: #f7f5f2;
+  --bg-elevated: #ffffff;
+  --ink: #111111;
+  --ink-soft: #2a2a2a;
+  --muted: #6b6b6b;
+  --line: rgba(17, 17, 17, 0.08);
+  --line-strong: rgba(17, 17, 17, 0.16);
+  --charcoal: #1a1a1a;
+  --charcoal-2: #242424;
+  --cream: #f7f5f2;
+  --soft: #e8e6e2;
+  --live: #1a1a1a;
+  --go: #2f6b4f;
+  --caution: #8a6a1f;
+  --skip: #8b3a2f;
+  --serif: var(--font-newsreader), "Newsreader", Georgia, serif;
+  --sans: var(--font-geist), "Geist", system-ui, sans-serif;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @theme inline {
   --color-background: var(--bg);
   --color-foreground: var(--ink);
-  --color-amber: var(--amber);
-  --color-rust: var(--rust);
+  --color-muted: var(--muted);
+  --color-charcoal: var(--charcoal);
   --font-sans: var(--sans);
   --font-serif: var(--serif);
 }
 
-html, body {
+html,
+body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
@@ -33,38 +40,99 @@ html, body {
 
 body {
   background-image:
-    radial-gradient(1200px 600px at 10% -10%, rgba(196, 92, 38, 0.18), transparent 50%),
-    radial-gradient(900px 500px at 110% 10%, rgba(212, 165, 116, 0.08), transparent 45%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+    radial-gradient(900px 420px at 50% -10%, rgba(0, 0, 0, 0.03), transparent 55%);
 }
 
-a { color: inherit; text-decoration: none; }
-
-.serif { font-family: var(--serif); }
-
-.hairline { border-color: var(--line); }
-
-.ticket {
-  background: linear-gradient(180deg, #1a1712 0%, #12100c 100%);
-  border: 1px solid var(--line);
-  box-shadow: 0 30px 80px rgba(0,0,0,.45);
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-.polaroid {
-  background: #1c1914;
-  border: 1px solid var(--line);
-  padding: 10px 10px 28px;
-  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+.serif {
+  font-family: var(--serif);
+}
+
+.serif-italic {
+  font-family: var(--serif);
+  font-style: italic;
 }
 
 .kicker {
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  font-size: 11px;
-  color: var(--amber);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.card-dark {
+  background: linear-gradient(165deg, #222 0%, #141414 100%);
+  color: #f5f5f5;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+}
+
+.card-light {
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.04);
+}
+
+.hairline {
+  border-color: var(--line);
 }
 
 .map-attribution {
   font-size: 11px;
   color: var(--muted);
+}
+
+.aura-shell {
+  padding-bottom: calc(5.5rem + var(--safe-bottom));
+}
+
+@media (min-width: 768px) {
+  .aura-shell {
+    padding-bottom: 0;
+  }
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #ebe8e3 25%, #f5f3ef 50%, #ebe8e3 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fade-up 0.45s ease both;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  animation: pulse-dot 1.6s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.55); }
+  70% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
 }

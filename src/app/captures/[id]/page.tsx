@@ -1,12 +1,11 @@
-import { SiteHeader } from "@/components/site-header";
+import { AppShell } from "@/components/aura/app-shell";
 import { CaptureConfirm } from "@/components/capture-confirm";
 
 export default async function CapturePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   return (
-    <div className="min-h-screen">
-      <SiteHeader signedIn />
+    <AppShell>
       <CaptureConfirm id={id} />
-    </div>
+    </AppShell>
   );
 }

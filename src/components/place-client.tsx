@@ -53,17 +53,17 @@ export function PlaceClient({
     })();
   }, [id]);
 
-  if (err) return <p className="px-5 py-16 text-[#b5523a]">{err}</p>;
-  if (!data) return <p className="px-5 py-16 text-[#9a8f7e]">Loading place…</p>;
+  if (err) return <p className="px-5 py-16 text-[#8b3a2f]">{err}</p>;
+  if (!data) return <p className="px-5 py-16 text-[#6b6b6b]">Loading place…</p>;
   const p = data.place;
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-10">
       <p className="kicker">{p.primaryType?.replace(/_/g, " ") || "place"}</p>
       <h1 className="serif mt-2 text-5xl">{p.name}</h1>
-      <p className="mt-2 text-[#9a8f7e]">{p.formattedAddress}</p>
+      <p className="mt-2 text-[#6b6b6b]">{p.formattedAddress}</p>
       {p.rating ? (
-        <p className="mt-2 text-sm text-[#d4a574]">
+        <p className="mt-2 text-sm text-[#111]">
           {p.rating}
           {p.userRatingCount ? ` · ${p.userRatingCount} reviews` : ""}
         </p>
@@ -82,7 +82,7 @@ export function PlaceClient({
       >
         {data.book.label}
       </a>
-      <p className="mt-3 text-sm text-[#9a8f7e]">{data.copy || NO_INVENTORY_COPY}</p>
+      <p className="mt-3 text-sm text-[#6b6b6b]">{data.copy || NO_INVENTORY_COPY}</p>
       {data.screenshots?.length ? (
         <div className="mt-10 grid grid-cols-2 gap-3">
           {data.screenshots.map((s) => (
@@ -102,7 +102,7 @@ export function PlaceClient({
         </div>
       ) : null}
       {p.googleMapsUri && (
-        <a href={p.googleMapsUri} className="mt-8 inline-block text-sm text-[#d4a574]" target="_blank" rel="noreferrer">
+        <a href={p.googleMapsUri} className="mt-8 inline-block text-sm text-[#111]" target="_blank" rel="noreferrer">
           Open map ↗
         </a>
       )}

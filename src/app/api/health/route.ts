@@ -5,7 +5,7 @@ export async function GET() {
   const env = getEnvStatus();
   return NextResponse.json({
     ok: true,
-    app: "datedrop",
+    app: "aura-concierge-elite",
     stack: {
       places: env.placesProvider,
       maps: "maplibre+openfreemap",
@@ -16,7 +16,7 @@ export async function GET() {
     },
     env,
     note: env.missing.length
-      ? "App boots with missing keys. Features that need them return readable errors. Places/maps work without Google billing."
+      ? "App boots with missing keys. Features that need them return readable errors."
       : "All required keys present (or free fallbacks active).",
   });
 }

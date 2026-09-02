@@ -5,6 +5,7 @@ import { captures, boards, boardPlaces } from "@/lib/models";
 import { mongoConfigured } from "@/lib/mongodb";
 import { textSearch, upsertPlaceFromMatch, placeIdOf } from "@/lib/places";
 import type { PlaceMatch } from "@/lib/types";
+import { generateAlertsForUser } from "@/lib/alerts";
 
 function cityFromAddress(addr: string, fallback?: string) {
   const parts = addr.split(",").map((s) => s.trim()).filter(Boolean);
@@ -67,7 +68,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
     if (!match) {
       return NextResponse.json(
-        { error: "Pick a place match. DateDrop never auto-saves a guess." },
+        { error: "Pick a place match. Aura never auto-saves a guess." },
         { status: 400 },
       );
     }
@@ -116,6 +117,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       { $set: { status: "saved", updatedAt: new Date() } },
     );
 
+    void generateAlertsForUser(user.userId);
     return NextResponse.json({
       ok: true,
       boardId: board!._id!.toString(),

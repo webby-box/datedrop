@@ -7,9 +7,9 @@ export default function NotFound() {
       <SiteHeader />
       <div className="px-5 py-24 text-center">
         <p className="kicker">404</p>
-        <h1 className="serif mt-2 text-5xl">That pin isn&apos;t on the map</h1>
-        <Link href="/" className="mt-6 inline-block text-[#d4a574]">
-          Back to DateDrop
+        <h1 className="serif-italic mt-2 text-5xl">That pin isn&apos;t on the map</h1>
+        <Link href="/explore" className="mt-6 inline-block text-sm uppercase tracking-[0.16em]">
+          Back to Aura
         </Link>
       </div>
     </div>

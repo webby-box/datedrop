@@ -9,15 +9,15 @@ export function AuthScreens({ ready }: { ready: boolean }) {
       <div className="mx-auto max-w-lg px-5 py-20">
         <p className="kicker">Google Sign-In</p>
         <h1 className="serif mt-3 text-4xl">Auth keys are not set</h1>
-        <p className="mt-4 text-[#cfc3ae]">
-          DateDrop still boots. Add <code className="text-[#d4a574]">AUTH_SECRET</code>{" "}
-          (generate with <code className="text-[#d4a574]">openssl rand -base64 32</code>),{" "}
-          <code className="text-[#d4a574]">AUTH_GOOGLE_ID</code>, and{" "}
-          <code className="text-[#d4a574]">AUTH_GOOGLE_SECRET</code> to <code>.env.local</code>,
-          then restart. Until then you can explore the inbox in demo mode.
+        <p className="mt-4 text-[#6b6b6b]">
+          Aura still boots in demo mode. Add <code className="text-[#111]">AUTH_SECRET</code>{" "}
+          (generate with <code className="text-[#111]">openssl rand -base64 32</code>),{" "}
+          <code className="text-[#111]">AUTH_GOOGLE_ID</code>, and{" "}
+          <code className="text-[#111]">AUTH_GOOGLE_SECRET</code> to <code>.env.local</code>,
+          then restart.
         </p>
-        <Link href="/inbox" className="mt-8 inline-block rounded-full bg-[#c45c26] px-5 py-3 text-sm">
-          Continue to inbox
+        <Link href="/" className="mt-8 inline-block rounded-full bg-black px-5 py-3 text-sm text-white">
+          Continue to Explore
         </Link>
       </div>
     );
@@ -26,14 +26,14 @@ export function AuthScreens({ ready }: { ready: boolean }) {
     <div className="mx-auto flex max-w-md flex-col items-center px-5 py-20 text-center">
       <p className="kicker">Welcome</p>
       <h1 className="serif mt-3 text-4xl">Continue with Google</h1>
-      <p className="mt-4 text-[#cfc3ae]">
-        Sign in with your Google account to save captures and boards. No passwords — Google handles
-        identity.
+      <p className="mt-4 text-[#6b6b6b]">
+        Sign in to save captures to The Vault and receive proactive alerts. No passwords — Google
+        handles identity.
       </p>
       <button
         type="button"
-        onClick={() => void signIn("google", { callbackUrl: "/inbox" })}
-        className="mt-8 rounded-full bg-[#c45c26] px-6 py-3 text-sm font-medium text-[#f4ead5]"
+        onClick={() => void signIn("google", { callbackUrl: "/" })}
+        className="mt-8 rounded-full bg-black px-6 py-3 text-sm font-medium text-white"
       >
         Continue with Google
       </button>

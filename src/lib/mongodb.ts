@@ -44,5 +44,8 @@ export async function ensureIndexes() {
     db.collection("plans").createIndex({ boardId: 1 }, { unique: true }),
     db.collection("climateCache").createIndex({ key: 1 }, { unique: true }),
     db.collection("rateLimits").createIndex({ key: 1, windowStart: 1 }),
+    db.collection("alerts").createIndex({ userId: 1, createdAt: -1 }),
+    db.collection("alerts").createIndex({ userId: 1, fingerprint: 1 }, { unique: true }),
+    db.collection("venueLogistics").createIndex({ userId: 1, placeId: 1 }, { unique: true }),
   ]);
 }
