@@ -58,9 +58,13 @@ body {
     radial-gradient(900px 420px at 50% -10%, rgba(0, 0, 0, 0.03), transparent 55%);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Keep link reset in @layer base so utility classes (text-white, text-[var(--muted)], …)
+   win over `color: inherit` — unlayered `a` rules override Tailwind utilities. */
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 .serif {
