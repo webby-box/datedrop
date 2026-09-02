@@ -7,30 +7,29 @@ import { ObjectId } from "mongodb";
 import type { Candidate, Extraction } from "./types";
 
 async function resolveMatches(extraction: Extraction): Promise<Extraction> {
-  const candidates: Candidate[] = [];
-  for (const c of extraction.candidates) {
-    if (c.kind === "unknown" || !c.name) {
-      candidates.push(c);
-      continue;
-    }
-    const q = [c.name, c.neighborhood, c.city, c.country].filter(Boolean).join(", ");
-    try {
-      const matches = await textSearch(q, 3);
-      candidates.push({ ...c, matches });
-    } catch (err) {
-      if (err instanceof PlacesNotConfigured) {
-        candidates.push({
-          ...c,
-          cues: [...c.cues, "Places lookup unavailable — search to confirm"],
-        });
-      } else {
-        candidates.push({
+  const candidates: Candidate[] = await Promise.all(
+    extraction.candidates.map(async (c) => {
+      if (c.kind === "unknown" || !c.name) {
+        return c;
+      }
+      const q = [c.name, c.neighborhood, c.city, c.country].filter(Boolean).join(", ");
+      try {
+        const matches = await textSearch(q, 3);
+        return { ...c, matches };
+      } catch (err) {
+        if (err instanceof PlacesNotConfigured) {
+          return {
+            ...c,
+            cues: [...c.cues, "Places lookup unavailable — search to confirm"],
+          };
+        }
+        return {
           ...c,
           cues: [...c.cues, `Places lookup failed: ${(err as Error).message}`],
-        });
+        };
       }
-    }
-  }
+    }),
+  );
   return { ...extraction, candidates };
 }
 

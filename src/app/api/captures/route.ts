@@ -7,12 +7,68 @@ import { prepareImage, ImageError } from "@/lib/image";
 import { assertCaptureRate } from "@/lib/rate-limit";
 import { classifyUrl } from "@/lib/urls";
 import { processCapture } from "@/lib/process";
-import { ensureIndexes } from "@/lib/mongodb";
+import { ensureIndexesOnce } from "@/lib/mongodb";
+
+export const runtime = "nodejs";
 
 function fail(err: unknown, fallback = 500) {
   const e = err as Error & { status?: number };
   const status = e.status || fallback;
   return NextResponse.json({ error: e.message || "Unexpected error" }, { status });
+}
+
+type IncomingImage = { name?: string; mime?: string; dataBase64?: string };
+
+async function parseBody(req: Request): Promise<{
+  pastedUrl: string;
+  files: { name: string; mime: string; bytes: Buffer }[];
+}> {
+  const contentType = req.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    const body = (await req.json()) as {
+      url?: string;
+      images?: IncomingImage[];
+    };
+    const pastedUrl = String(body.url || "").trim();
+    const images = Array.isArray(body.images) ? body.images : [];
+    const files: { name: string; mime: string; bytes: Buffer }[] = [];
+    for (const img of images) {
+      if (!img?.dataBase64) continue;
+      const raw = String(img.dataBase64).replace(/^data:[^;]+;base64,/, "");
+      const bytes = Buffer.from(raw, "base64");
+      if (!bytes.length) continue;
+      files.push({
+        name: img.name || "shot.jpg",
+        mime: img.mime || "image/jpeg",
+        bytes,
+      });
+    }
+    return { pastedUrl, files };
+  }
+
+  let form: FormData;
+  try {
+    form = await req.formData();
+  } catch (err) {
+    const msg = (err as Error)?.message || String(err);
+    const error = new Error(
+      `Failed to parse body as FormData. Prefer JSON {url?, images:[{name,mime,dataBase64}]} — ${msg}`,
+    );
+    (error as Error & { status: number }).status = 400;
+    throw error;
+  }
+
+  const pastedUrl = String(form.get("url") || "").trim();
+  const rawFiles = form.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
+  const files = await Promise.all(
+    rawFiles.map(async (file) => ({
+      name: file.name || "shot.jpg",
+      mime: file.type || "image/jpeg",
+      bytes: Buffer.from(await file.arrayBuffer()),
+    })),
+  );
+  return { pastedUrl, files };
 }
 
 export async function GET() {
@@ -47,28 +103,29 @@ export async function POST(req: Request) {
         { status: 503 },
       );
     }
-    await ensureIndexes();
+    await ensureIndexesOnce();
     await assertCaptureRate(user.userId);
 
-    const form = await req.formData();
-    const pastedUrl = String(form.get("url") || "").trim();
-    const files = form.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
+    const { pastedUrl, files } = await parseBody(req);
 
     if (!files.length && !pastedUrl) {
       return NextResponse.json({ error: "Drop a screenshot or paste a Maps / booking URL." }, { status: 400 });
     }
 
-    const blobUrls: string[] = [];
-    const prepared: { mime: string; bytes: Buffer }[] = [];
     const warnings: string[] = [];
 
-    for (const file of files) {
-      const buf = Buffer.from(await file.arrayBuffer());
-      const ready = await prepareImage(buf, file.type || "image/jpeg", file.name || "shot.jpg");
-      const stored = await storeScreenshot(ready.bytes, ready.mime, file.name || "shot.jpg");
-      blobUrls.push(stored.url);
-      prepared.push(ready);
-      if (stored.warning) warnings.push(stored.warning);
+    const preparedRows = await Promise.all(
+      files.map(async (file) => {
+        const ready = await prepareImage(file.bytes, file.mime || "image/jpeg", file.name || "shot.jpg");
+        const stored = await storeScreenshot(ready.bytes, ready.mime, file.name || "shot.jpg");
+        return { ready, stored };
+      }),
+    );
+
+    const blobUrls = preparedRows.map((r) => r.stored.url);
+    const prepared = preparedRows.map((r) => r.ready);
+    for (const r of preparedRows) {
+      if (r.stored.warning) warnings.push(r.stored.warning);
     }
 
     let source: "upload" | "maps_url" | "booking_url" = "upload";
@@ -105,7 +162,7 @@ export async function POST(req: Request) {
     });
 
     const id = result.insertedId.toString();
-    // fire and forget — UI polls
+    // fire and forget — UI polls; vision already concurrent inside extract
     void processCapture(id, prepared);
 
     return NextResponse.json({ id, warnings, status: "processing" });

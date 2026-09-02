@@ -5,6 +5,7 @@ const DB_NAME = "datedrop";
 type GlobalMongo = typeof globalThis & {
   _mongoClient?: MongoClient;
   _mongoClientPromise?: Promise<MongoClient>;
+  _mongoIndexesPromise?: Promise<void>;
 };
 
 export function mongoConfigured() {
@@ -48,4 +49,16 @@ export async function ensureIndexes() {
     db.collection("alerts").createIndex({ userId: 1, fingerprint: 1 }, { unique: true }),
     db.collection("venueLogistics").createIndex({ userId: 1, placeId: 1 }, { unique: true }),
   ]);
+}
+
+/** Run ensureIndexes at most once per process (createIndex is idempotent but still network-heavy). */
+export async function ensureIndexesOnce() {
+  const g = globalThis as GlobalMongo;
+  if (!g._mongoIndexesPromise) {
+    g._mongoIndexesPromise = ensureIndexes().catch((err) => {
+      g._mongoIndexesPromise = undefined;
+      throw err;
+    });
+  }
+  return g._mongoIndexesPromise;
 }

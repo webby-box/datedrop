@@ -8,6 +8,60 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, Link2 } from "lucide-react";
 
+const MAX_EDGE = 1600;
+const JPEG_QUALITY = 0.82;
+
+type PackedImage = { name: string; mime: string; dataBase64: string };
+
+async function fileToImageBitmap(file: File): Promise<ImageBitmap> {
+  return createImageBitmap(file);
+}
+
+async function compressImage(file: File): Promise<PackedImage> {
+  try {
+    const bitmap = await fileToImageBitmap(file);
+    const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
+    const w = Math.max(1, Math.round(bitmap.width * scale));
+    const h = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("canvas");
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close();
+
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob((b) => resolve(b), "image/jpeg", JPEG_QUALITY),
+    );
+    if (!blob) throw new Error("toBlob");
+
+    const buf = await blob.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+    let binary = "";
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+    }
+    const name = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+    return { name, mime: "image/jpeg", dataBase64: btoa(binary) };
+  } catch {
+    // Fallback: send original as base64 (may be HEIC — server will try sharp)
+    const buf = await file.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+    let binary = "";
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+    }
+    return {
+      name: file.name || "shot.jpg",
+      mime: file.type || "application/octet-stream",
+      dataBase64: btoa(binary),
+    };
+  }
+}
+
 export function CaptureClient() {
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
@@ -17,7 +71,7 @@ export function CaptureClient() {
 
   const onFiles = useCallback((list: FileList | null) => {
     if (!list?.length) return;
-    const next = Array.from(list).filter((f) => f.type.startsWith("image/")).slice(0, 4);
+    const next = Array.from(list).filter((f) => f.type.startsWith("image/") || /\.(heic|heif)$/i.test(f.name)).slice(0, 4);
     setFiles(next);
   }, []);
 
@@ -27,20 +81,67 @@ export function CaptureClient() {
       return;
     }
     setBusy(true);
+    const toastId = toast.loading(files.length ? "Compressing images…" : "Uploading…");
     try {
-      const form = new FormData();
-      files.forEach((f) => form.append("files", f));
-      if (url.trim()) form.append("url", url.trim());
-      const res = await fetch("/api/captures", { method: "POST", body: form });
+      let images: PackedImage[] = [];
+      if (files.length) {
+        images = await Promise.all(files.map((f) => compressImage(f)));
+        toast.loading("Uploading…", { id: toastId });
+      }
+
+      const payload = {
+        url: url.trim() || undefined,
+        images,
+      };
+
+      let res: Response;
+      try {
+        res = await fetch("/api/captures", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } catch {
+        // Network-level failure — try multipart fallback
+        toast.loading("Retrying upload…", { id: toastId });
+        const form = new FormData();
+        files.forEach((f) => form.append("files", f));
+        if (url.trim()) form.append("url", url.trim());
+        res = await fetch("/api/captures", { method: "POST", body: form });
+      }
+
+      // If JSON path got a parse/body error, fall back to FormData once
+      if (!res.ok && res.status >= 400) {
+        const peek = await res.clone().json().catch(() => null);
+        const errMsg = String(peek?.error || "");
+        if (/formdata|parse body|multipart/i.test(errMsg) || res.status === 415) {
+          toast.loading("Retrying upload…", { id: toastId });
+          const form = new FormData();
+          // Prefer compressed blobs when available
+          if (images.length) {
+            for (const img of images) {
+              const bin = atob(img.dataBase64);
+              const arr = new Uint8Array(bin.length);
+              for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+              form.append("files", new File([arr], img.name, { type: img.mime }));
+            }
+          } else {
+            files.forEach((f) => form.append("files", f));
+          }
+          if (url.trim()) form.append("url", url.trim());
+          res = await fetch("/api/captures", { method: "POST", body: form });
+        }
+      }
+
       const json = await res.json();
       if (!res.ok) {
-        toast.error(json.error || "Capture failed");
+        toast.error(json.error || "Capture failed", { id: toastId });
         return;
       }
-      toast.success("Reading the chrome…");
+      toast.success("Reading the chrome…", { id: toastId });
       router.push(`/captures/${json.id}`);
     } catch {
-      toast.error("Network error");
+      toast.error("Network error", { id: toastId });
     } finally {
       setBusy(false);
     }
