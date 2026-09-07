@@ -59,7 +59,9 @@ test.describe("Aura Concierge Elite", () => {
 
   test("demo continue reaches Explore with Drop Confirm Date", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: /continue as demo/i }).click();
+    const demo = page.getByRole("button", { name: /continue as demo/i });
+    await expect(demo).toBeEnabled({ timeout: 15000 });
+    await demo.click();
     await expect(page.getByRole("heading", { name: "Explore" })).toBeVisible({ timeout: 20000 });
     await expect(page.getByText("Tonight's desk")).toBeVisible();
     await expect(page.getByText("Google Maps pin")).toBeVisible();

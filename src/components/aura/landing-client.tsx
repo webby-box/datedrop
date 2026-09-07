@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 
 const STEPS = [
@@ -31,11 +31,29 @@ const EXAMPLES = [
 
 export function LandingClient({ authReady }: { authReady: boolean }) {
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
 
   async function demo() {
     setBusy(true);
     try {
-      await signIn("demo", { callbackUrl: "/", redirect: true });
+      const csrfRes = await fetch("/api/auth/csrf");
+      const csrf = await csrfRes.json();
+      const token = csrf?.csrfToken;
+      if (!token) {
+        await signIn("demo", { callbackUrl: "/", redirect: true });
+        return;
+      }
+      await fetch("/api/auth/callback/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ csrfToken: token, callbackUrl: "/" }),
+        redirect: "manual",
+      });
+      window.location.assign("/");
     } finally {
       setBusy(false);
     }
@@ -65,7 +83,7 @@ export function LandingClient({ authReady }: { authReady: boolean }) {
               <button
                 type="button"
                 onClick={() => void demo()}
-                disabled={busy}
+                disabled={busy || !ready}
                 className="focus-ring inline-flex min-h-[48px] items-center rounded-full bg-[var(--gold)] px-6 text-sm font-medium text-[var(--ink)] transition hover:bg-[#c9a97a] disabled:opacity-60"
               >
                 {busy ? "Entering…" : "Continue as demo"}

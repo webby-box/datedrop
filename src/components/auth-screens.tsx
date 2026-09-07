@@ -10,6 +10,19 @@ export function AuthScreens({ ready }: { ready: boolean }) {
   async function enterDemo() {
     setDemoBusy(true);
     try {
+      const csrfRes = await fetch("/api/auth/csrf");
+      const csrf = await csrfRes.json();
+      const token = csrf?.csrfToken;
+      if (token) {
+        await fetch("/api/auth/callback/demo", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ csrfToken: token, callbackUrl: "/" }),
+          redirect: "manual",
+        });
+        window.location.assign("/");
+        return;
+      }
       await signIn("demo", { callbackUrl: "/", redirect: true });
     } finally {
       setDemoBusy(false);
