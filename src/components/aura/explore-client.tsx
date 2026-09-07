@@ -8,6 +8,7 @@ import { TasteChips } from "./taste-chips";
 import { EmptyState } from "./empty-state";
 import { CardSkeleton } from "./skeleton";
 import { BoardMap } from "@/components/board-map";
+import { SAMPLE_ALERTS } from "@/lib/sample-content";
 
 type VaultPin = { lat: number; lng: number; name: string; placeId: string };
 
@@ -76,6 +77,18 @@ export function ExploreClient() {
             </Link>
           </div>
 
+          <ol className="flex flex-wrap gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.16em] text-[var(--muted)]">
+            <li>
+              <span className="text-[var(--ink)]">Drop</span> a screenshot
+            </li>
+            <li>
+              <span className="text-[var(--ink)]">Confirm</span> the place
+            </li>
+            <li>
+              <span className="text-[var(--ink)]">Date</span> the occasion
+            </li>
+          </ol>
+
           {loading ? (
             <div className="grid gap-4 sm:grid-cols-2">
               <CardSkeleton />
@@ -88,13 +101,25 @@ export function ExploreClient() {
               ))}
             </div>
           ) : (
-            <EmptyState
-              kicker="Quiet for now"
-              title="No alerts yet"
-              body="Save places to The Vault and set plan dates. Aura generates booking-window and taste alerts from your data — not inventory scrapes."
-              href="/capture"
-              cta="Add a place"
-            />
+            <div className="space-y-4">
+              <EmptyState
+                kicker="Quiet for now"
+                title="No alerts yet"
+                body="Save places to The Vault and set plan dates. Aura generates booking-window and taste alerts from your data — not inventory scrapes."
+                href="/capture"
+                cta="Add a place"
+              />
+              <p className="kicker px-1">Examples</p>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {SAMPLE_ALERTS.map((a) => (
+                  <article key={a._id} className="card-light rounded-[var(--radius-xl)] p-5">
+                    <p className="kicker">{a.title}</p>
+                    <h3 className="serif-italic mt-2 text-2xl">{a.placeName}</h3>
+                    <p className="page-lead mt-2">{a.body}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
           )}
         </section>
 

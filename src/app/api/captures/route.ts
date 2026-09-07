@@ -137,7 +137,7 @@ export async function POST(req: Request) {
           return NextResponse.json(
             {
               error:
-                "That URL is not a supported Maps or public venue link. Paste google.com/maps, maps.google.com, maps.app.goo.gl, Resy, OpenTable, or Tock public pages — we do not fetch live slot grids.",
+                "That URL is not a supported Maps or public venue link. Paste google.com/maps, maps.google.com, maps.app.goo.gl, Instagram, TikTok, Resy, OpenTable, or Tock public pages — we do not fetch live slot grids or scrape social posts.",
             },
             { status: 400 },
           );

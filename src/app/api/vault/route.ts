@@ -16,6 +16,7 @@ export async function GET(req: Request) {
     const q = (url.searchParams.get("q") || "").toLowerCase();
     const city = (url.searchParams.get("city") || "").toLowerCase();
     const type = (url.searchParams.get("type") || "").toLowerCase();
+    const occasion = (url.searchParams.get("occasion") || "").toLowerCase();
     const withLogistics = url.searchParams.get("logistics") === "1";
 
     const boardList = await (await boards()).find({ userId: user.userId }).toArray();
@@ -45,6 +46,7 @@ export async function GET(req: Request) {
           boardId: b._id!.toString(),
           imageUrl: link?.sourceScreenshotUrl,
           status: link?.status || "want",
+          occasion: link?.occasion || "want",
           booking: bookingDeepLink({
             name: place.name,
             websiteUri: place.websiteUri,
@@ -55,6 +57,7 @@ export async function GET(req: Request) {
         };
         if (q && !`${row.name} ${row.address} ${row.city}`.toLowerCase().includes(q)) continue;
         if (city && !row.city.toLowerCase().includes(city)) continue;
+        if (occasion && (row.occasion || "want") !== occasion) continue;
         if (type && !(row.primaryType || "").toLowerCase().includes(type) && !(row.types || []).some((t) => t.toLowerCase().includes(type))) continue;
         items.push(row);
       }

@@ -6,6 +6,7 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     app: "aura-concierge-elite",
+    aka: "datedrop",
     stack: {
       places: env.placesProvider,
       maps: "maplibre+openfreemap",

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { OccasionChips } from "@/components/aura/occasion-chips";
 
 type Match = {
   externalPlaceId?: string;
@@ -46,6 +47,7 @@ export function CaptureConfirm({ id }: { id: string }) {
   const [q, setQ] = useState("");
   const [searchHits, setSearchHits] = useState<Match[] | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [occasion, setOccasion] = useState("want");
 
   useEffect(() => {
     let stop = false;
@@ -123,6 +125,10 @@ export function CaptureConfirm({ id }: { id: string }) {
         <p className="kicker">Confirm — never auto-saved</p>
         <h1 className="page-title serif mt-2 text-4xl">Is this the place?</h1>
         {msg && <p className="mt-3 text-sm text-[var(--skip)]">{msg}</p>}
+        <div className="mt-6">
+          <p className="kicker mb-3">Occasion</p>
+          <OccasionChips value={occasion} onChange={setOccasion} />
+        </div>
         <div className="mt-6 space-y-8">
           {cands.map((c, ci) => (
             <section key={`${c.name}-${ci}`} className="card-light rounded-[var(--radius-lg)] p-5">
@@ -152,6 +158,7 @@ export function CaptureConfirm({ id }: { id: string }) {
                           candidateIndex: ci,
                           matchIndex: mi,
                           externalPlaceId: mid(m),
+                          occasion,
                         })
                       }
                     >
@@ -189,7 +196,7 @@ export function CaptureConfirm({ id }: { id: string }) {
                   <p>{m.name}</p>
                   <p className="text-sm text-[var(--muted)]">{m.formattedAddress}</p>
                 </div>
-                <Button size="sm" onClick={() => void act({ action: "save", externalPlaceId: mid(m) })}>
+                <Button size="sm" onClick={() => void act({ action: "save", externalPlaceId: mid(m), occasion })}>
                   Save
                 </Button>
               </li>

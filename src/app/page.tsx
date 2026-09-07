@@ -1,5 +1,6 @@
-import { ExploreClient } from "@/components/aura/explore-client";
+import { HomeGate } from "@/components/aura/home-gate";
+import { googleAuthConfigured } from "@/lib/env";
 
 export default function HomePage() {
-  return <ExploreClient />;
+  return <HomeGate authReady={googleAuthConfigured()} />;
 }

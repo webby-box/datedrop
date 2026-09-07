@@ -78,6 +78,7 @@ export type BoardPlaceRecord = {
   placeId: string;
   captureId?: string;
   notes?: string;
+  occasion?: string;
   sourceScreenshotUrl?: string;
   status: BoardPlaceStatus;
   tasteTags?: string[];

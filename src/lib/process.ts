@@ -45,7 +45,7 @@ export async function processCapture(id: string, images: { mime: string; bytes: 
         summary: `Pasted ${parsed?.sourceHint || "url"} — parsed public venue URL, not a live booking grid.`,
         candidates: [
           {
-            kind: parsed?.sourceHint === "google_maps" ? "place" : "restaurant",
+            kind: parsed?.sourceHint === "google_maps" || parsed?.sourceHint === "apple_maps" ? "place" : "restaurant",
             name: parsed?.displayName || parsed?.query || rec.pastedUrl,
             city: parsed?.city,
             neighborhood: undefined,

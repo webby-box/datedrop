@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { occasionLabel } from "@/lib/occasions";
 
 export type VaultItem = {
   placeId: string;
@@ -14,6 +15,7 @@ export type VaultItem = {
   bookingPlatform?: string;
   imageUrl?: string;
   status?: string;
+  occasion?: string;
 };
 
 function gradientFor(id: string) {
@@ -56,6 +58,7 @@ export function VaultCard({ item }: { item: VaultItem }) {
           {item.primaryType ? (
             <span className="chip">{item.primaryType.replace(/_/g, " ")}</span>
           ) : null}
+          {occasionLabel(item.occasion) ? <span className="chip">{occasionLabel(item.occasion)}</span> : null}
         </div>
       </div>
     </Link>

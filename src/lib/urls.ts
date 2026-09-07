@@ -60,6 +60,33 @@ export function classifyUrl(raw: string): ParsedPaste | null {
     const slug = path.split("/").filter(Boolean).pop() || "restaurant";
     return { source: "booking_url", sourceHint: "other", query: decodePlus(slug.replace(/-/g, " ")) };
   }
+  if (host.includes("instagram.com")) {
+    const slug = path.split("/").filter(Boolean).pop() || "instagram";
+    return {
+      source: "booking_url",
+      sourceHint: "instagram",
+      query: decodePlus(slug.replace(/[-_]/g, " ")),
+      displayName: "Instagram URL — confirm the restaurant (we do not scrape the post)",
+    };
+  }
+  if (host.includes("tiktok.com")) {
+    const slug = path.split("/").filter(Boolean).pop() || "tiktok";
+    return {
+      source: "booking_url",
+      sourceHint: "tiktok",
+      query: decodePlus(slug.replace(/[-_]/g, " ")),
+      displayName: "TikTok URL — confirm the restaurant (we do not scrape the video)",
+    };
+  }
+  if (host.includes("tripadvisor.com")) {
+    const slug = path.split("/").filter(Boolean).pop() || "place";
+    return {
+      source: "booking_url",
+      sourceHint: "tripadvisor",
+      query: decodePlus(slug.replace(/[-_]/g, " ")),
+      displayName: decodePlus(slug.replace(/[-_]/g, " ")),
+    };
+  }
   return null;
 }
 

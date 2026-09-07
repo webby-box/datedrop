@@ -27,8 +27,9 @@ export function PremiumClient() {
               <span className="serif-italic mt-1 block text-[var(--muted)]">— complimentary</span>
             </h1>
             <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-[var(--muted)]">
-              Every Aura feature is unlocked. No payments, no paywall. We identify places and open
-              booking sites — we never hold live inventory or scrape Resy.
+              HotSpot and Dorsia sell access to tables. Aura does the job before that: turn screenshots
+              into a vault, tag the occasion, and open the booking site in the 14–30 day window. No
+              payments, no paywall, no live inventory.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
