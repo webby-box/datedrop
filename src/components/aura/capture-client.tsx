@@ -99,7 +99,7 @@ export function CaptureClient() {
       const text = clip.getData("text").trim();
       if (/^https?:\/\//i.test(text)) {
         setUrl(text);
-        toast.message("Pasted URL");
+        toast.info("Pasted URL");
       }
     }
     window.addEventListener("paste", onPaste);
@@ -122,7 +122,7 @@ export function CaptureClient() {
       const text = (await navigator.clipboard.readText()).trim();
       if (/^https?:\/\//i.test(text)) {
         setUrl(text);
-        toast.message("Pasted URL");
+        toast.info("Pasted URL");
       } else {
         toast.error("Clipboard has no image or URL");
       }
