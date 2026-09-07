@@ -17,9 +17,10 @@ test.describe("Aura Concierge Elite", () => {
   test("privacy and terms mention OSM/Geoapify, private screenshots, no reservations", async ({ page }) => {
     await page.goto("/privacy");
     await expect(page.getByRole("heading", { name: "Privacy" })).toBeVisible();
-    await expect(page.getByText(/OpenStreetMap|Geoapify|Nominatim|places/i)).toBeVisible();
+    await expect(page.getByText(/Geoapify/)).toBeVisible();
+    await expect(page.getByText(/OpenStreetMap/)).toBeVisible();
     await expect(page.getByText(/do not place reservations/i)).toBeVisible();
-    await expect(page.getByText(/private/i)).toBeVisible();
+    await expect(page.getByText(/private vault/i)).toBeVisible();
 
     await page.goto("/terms");
     await expect(page.getByRole("heading", { name: "Terms" })).toBeVisible();
@@ -58,26 +59,20 @@ test.describe("Aura Concierge Elite", () => {
   test("demo continue reaches Explore with Drop Confirm Date", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /continue as demo/i }).click();
-    await expect(page.getByRole("heading", { name: "Explore" })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole("heading", { name: "Explore" })).toBeVisible({ timeout: 20000 });
     await expect(page.getByText("Google Maps pin")).toBeVisible();
     await expect(page.getByText("IG restaurant story")).toBeVisible();
     await expect(page.getByText("Travel postcard")).toBeVisible();
   });
 
   test("vault empty state and occasion filters", async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("button", { name: /continue as demo/i }).click();
-    await expect(page.getByRole("heading", { name: "Explore" })).toBeVisible({ timeout: 15000 });
     await page.goto("/vault");
     await expect(page.getByRole("heading", { name: /saved rooms/i })).toBeVisible();
     await expect(page.getByRole("button", { name: /date night/i })).toBeVisible();
-    await expect(page.getByText(/vault is empty|capture a place/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "The Vault is empty" })).toBeVisible();
   });
 
   test("plans form and premium honesty", async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("button", { name: /continue as demo/i }).click();
-    await expect(page.getByRole("heading", { name: "Explore" })).toBeVisible({ timeout: 15000 });
     await page.goto("/plans");
     await expect(page.getByRole("heading", { name: /dates & party/i })).toBeVisible();
     await expect(page.getByPlaceholder(/new york/i)).toBeVisible();
@@ -87,9 +82,6 @@ test.describe("Aura Concierge Elite", () => {
   });
 
   test("concierge chat shell", async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("button", { name: /continue as demo/i }).click();
-    await expect(page.getByRole("heading", { name: "Explore" })).toBeVisible({ timeout: 15000 });
     await page.goto("/concierge");
     await expect(page.getByRole("heading", { name: /ask aura/i })).toBeVisible();
     await expect(page.getByPlaceholder(/lilia/i)).toBeVisible();

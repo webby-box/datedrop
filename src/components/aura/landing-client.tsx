@@ -35,7 +35,7 @@ export function LandingClient({ authReady }: { authReady: boolean }) {
   async function demo() {
     setBusy(true);
     try {
-      await signIn("demo", { callbackUrl: "/" });
+      await signIn("demo", { callbackUrl: "/", redirect: true });
     } finally {
       setBusy(false);
     }
