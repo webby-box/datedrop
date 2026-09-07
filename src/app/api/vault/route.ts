@@ -17,6 +17,7 @@ export async function GET(req: Request) {
     const city = (url.searchParams.get("city") || "").toLowerCase();
     const type = (url.searchParams.get("type") || "").toLowerCase();
     const occasion = (url.searchParams.get("occasion") || "").toLowerCase();
+    const status = (url.searchParams.get("status") || "").toLowerCase();
     const withLogistics = url.searchParams.get("logistics") === "1";
 
     const boardList = await (await boards()).find({ userId: user.userId }).toArray();
@@ -58,6 +59,7 @@ export async function GET(req: Request) {
         if (q && !`${row.name} ${row.address} ${row.city}`.toLowerCase().includes(q)) continue;
         if (city && !row.city.toLowerCase().includes(city)) continue;
         if (occasion && (row.occasion || "want") !== occasion) continue;
+        if (status && (row.status || "want") !== status) continue;
         if (type && !(row.primaryType || "").toLowerCase().includes(type) && !(row.types || []).some((t) => t.toLowerCase().includes(type))) continue;
         items.push(row);
       }

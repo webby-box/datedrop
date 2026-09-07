@@ -1,39 +1,42 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f7f5f2;
-  --bg-elevated: #ffffff;
-  --ink: #111111;
-  --ink-soft: #2a2a2a;
-  --muted: #5c5c5c;
-  --muted-soft: #8a8a8a;
-  --bg-soft: #f0eeea;
-  --line-soft: rgba(17, 17, 17, 0.05);
-  --line: rgba(17, 17, 17, 0.08);
-  --line-strong: rgba(17, 17, 17, 0.14);
-  --charcoal: #1a1a1a;
-  --charcoal-2: #242424;
-  --cream: #f7f5f2;
-  --soft: #e8e6e2;
-  --live: #1a1a1a;
-  --go: #2f6b4f;
-  --caution: #8a6a1f;
+  --bg: #efe8dc;
+  --bg-elevated: #f7f2e9;
+  --ink: #1c1712;
+  --ink-soft: #2e2720;
+  --muted: #6b5e50;
+  --muted-soft: #8d7f6e;
+  --bg-soft: #e6ddd0;
+  --line-soft: rgba(28, 23, 18, 0.06);
+  --line: rgba(28, 23, 18, 0.1);
+  --line-strong: rgba(28, 23, 18, 0.18);
+  --charcoal: #1c1712;
+  --charcoal-2: #2a231c;
+  --cream: #efe8dc;
+  --soft: #ddd4c6;
+  --gold: #b8956a;
+  --gold-deep: #9a784f;
+  --live: #1c1712;
+  --go: #3d6b52;
+  --caution: #9a7430;
   --skip: #8b3a2f;
   --serif: var(--font-newsreader), "Newsreader", Georgia, serif;
   --sans: var(--font-geist), "Geist", "Inter", system-ui, sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
-  --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-  --radius-xl: 28px;
-  --radius-2xl: 32px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-2xl: 28px;
   --radius-pill: 999px;
-  --shadow-card: 0 10px 36px rgba(17, 17, 17, 0.045);
-  --shadow-card-hover: 0 18px 48px rgba(17, 17, 17, 0.08);
-  --shadow-dark: 0 24px 60px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 12px 40px rgba(28, 23, 18, 0.07);
+  --shadow-card-hover: 0 18px 48px rgba(28, 23, 18, 0.12);
+  --shadow-dark: 0 28px 64px rgba(0, 0, 0, 0.28);
   --control-h: 44px;
   --control-h-lg: 48px;
+  --header: #1c1712;
 }
 
 @theme inline {
@@ -55,11 +58,10 @@ body {
 
 body {
   background-image:
-    radial-gradient(900px 420px at 50% -10%, rgba(0, 0, 0, 0.03), transparent 55%);
+    radial-gradient(900px 480px at 12% -8%, rgba(184, 149, 106, 0.18), transparent 52%),
+    radial-gradient(700px 380px at 100% 0%, rgba(28, 23, 18, 0.05), transparent 48%);
 }
 
-/* Keep link reset in @layer base so utility classes (text-white, text-[var(--muted)], …)
-   win over `color: inherit` — unlayered `a` rules override Tailwind utilities. */
 @layer base {
   a {
     color: inherit;
@@ -81,18 +83,18 @@ body {
 }
 
 .kicker {
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   font-size: 10px;
   font-weight: 500;
   line-height: 1.2;
-  color: var(--muted);
+  color: var(--gold-deep);
 }
 
 .card-dark {
-  background: linear-gradient(165deg, #222 0%, #141414 100%);
-  color: #f5f5f5;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(165deg, #2a231c 0%, #1c1712 100%);
+  color: #f7f2e9;
+  border: 1px solid rgba(184, 149, 106, 0.22);
   box-shadow: var(--shadow-dark);
 }
 
@@ -123,12 +125,12 @@ body {
 }
 
 .focus-ring:focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--gold);
   outline-offset: 3px;
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #ebe8e3 25%, #f5f3ef 50%, #ebe8e3 75%);
+  background: linear-gradient(90deg, #e6ddd0 25%, #f4eee4 50%, #e6ddd0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s ease-in-out infinite;
 }
@@ -151,15 +153,15 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: #fff;
-  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  background: var(--gold);
+  box-shadow: 0 0 0 0 rgba(184, 149, 106, 0.7);
   animation: pulse-dot 1.6s infinite;
 }
 
 @keyframes pulse-dot {
-  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.55); }
-  70% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(184, 149, 106, 0.55); }
+  70% { box-shadow: 0 0 0 8px rgba(184, 149, 106, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(184, 149, 106, 0); }
 }
 
 .page-title {
@@ -197,7 +199,7 @@ body {
   align-items: center;
   gap: 0.35rem;
   border-radius: var(--radius-pill);
-  background: rgba(17, 17, 17, 0.05);
+  background: rgba(28, 23, 18, 0.05);
   padding: 0.35rem 0.75rem;
   font-size: 10px;
   font-weight: 500;
@@ -208,7 +210,7 @@ body {
 
 .card-interactive:hover {
   box-shadow: var(--shadow-card-hover);
-  border-color: var(--line-strong);
+  border-color: rgba(184, 149, 106, 0.45);
   transform: translateY(-2px);
 }
 
@@ -231,8 +233,8 @@ body {
 
 .control:focus-visible {
   outline: none;
-  border-color: rgba(17, 17, 17, 0.28);
-  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(184, 149, 106, 0.22);
 }
 
 .control-lg {
@@ -242,10 +244,26 @@ body {
 
 .select-aura {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235c5c5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b5e50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   padding-right: 2.5rem;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.gold-rule {
+  height: 2px;
+  width: 3rem;
+  background: var(--gold);
 }
 
 .prose-legal h2 {
@@ -261,5 +279,5 @@ body {
 }
 
 ::selection {
-  background: rgba(17, 17, 17, 0.12);
+  background: rgba(184, 149, 106, 0.28);
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { AppShell } from "./app-shell";
 import { EmptyState } from "./empty-state";
@@ -21,7 +22,9 @@ type PlanBoard = {
 };
 
 export function PlansClient() {
+  const router = useRouter();
   const [boards, setBoards] = useState<PlanBoard[]>([]);
+  const [vaultCities, setVaultCities] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [city, setCity] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -31,9 +34,11 @@ export function PlansClient() {
 
   async function load() {
     setLoading(true);
-    const res = await fetch("/api/boards");
-    const json = await res.json();
-    if (res.ok) setBoards(json.boards || []);
+    const [bRes, vRes] = await Promise.all([fetch("/api/boards"), fetch("/api/vault")]);
+    const bJson = await bRes.json();
+    const vJson = await vRes.json();
+    if (bRes.ok) setBoards(bJson.boards || []);
+    if (vRes.ok) setVaultCities(vJson.cities || []);
     setLoading(false);
   }
 
@@ -67,7 +72,7 @@ export function PlansClient() {
     toast.success("Plan saved");
     setCity("");
     await load();
-    if (json.board?._id) window.location.href = `/plans/${json.board._id}`;
+    if (json.board?._id) router.push(`/plans/${json.board._id}`);
   }
 
   return (
@@ -80,24 +85,60 @@ export function PlansClient() {
             <p className="page-lead mt-2.5">
               Create from city + dates. Itinerary & Open-Meteo climate generate on the detail page.
             </p>
-            <div className="mt-6 space-y-3">
-              <Input
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="City (e.g. New York)"
-              />
-              <div className="grid grid-cols-2 gap-3">
-                <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            <div className="mt-6 space-y-4">
+              <div>
+                <label className="field-label" htmlFor="plan-city">
+                  City
+                </label>
+                <Input
+                  id="plan-city"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="City (e.g. New York)"
+                />
+                {vaultCities.length ? (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {vaultCities.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setCity(c)}
+                        className="chip hover:bg-black/10"
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
               </div>
-              <Input
-                type="number"
-                min={1}
-                max={12}
-                value={partySize}
-                onChange={(e) => setPartySize(Number(e.target.value) || 2)}
-                aria-label="Party size"
-              />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="field-label" htmlFor="plan-start">
+                    Start
+                  </label>
+                  <Input id="plan-start" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                </div>
+                <div>
+                  <label className="field-label" htmlFor="plan-end">
+                    End
+                  </label>
+                  <Input id="plan-end" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                </div>
+              </div>
+              <div>
+                <label className="field-label" htmlFor="plan-party">
+                  Party size
+                </label>
+                <Input
+                  id="plan-party"
+                  type="number"
+                  min={1}
+                  max={12}
+                  value={partySize}
+                  onChange={(e) => setPartySize(Number(e.target.value) || 2)}
+                  aria-label="Party size"
+                />
+              </div>
               <Button className="w-full" disabled={busy} onClick={() => void create()}>
                 {busy ? "Saving…" : "Create plan"}
               </Button>
@@ -132,7 +173,7 @@ export function PlansClient() {
                         vault places
                       </p>
                     </div>
-                    <span className="shrink-0 text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
+                    <span className="shrink-0 text-[10px] uppercase tracking-[0.18em] text-[var(--gold-deep)]">
                       Open →
                     </span>
                   </Link>

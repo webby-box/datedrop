@@ -1,12 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "./app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 type Msg = { role: "user" | "aura"; text: string };
+
+const PROMPTS = [
+  "When should I book Lilia for next month?",
+  "What is the climate like for my next plan?",
+  "How should I book a hard table from The Vault?",
+];
 
 export function ConciergeClient() {
   const [messages, setMessages] = useState<Msg[]>([
@@ -17,9 +23,14 @@ export function ConciergeClient() {
   ]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const bottom = useRef<HTMLDivElement>(null);
 
-  async function send() {
-    const message = input.trim();
+  useEffect(() => {
+    bottom.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, busy]);
+
+  async function send(preset?: string) {
+    const message = (preset ?? input).trim();
     if (!message || busy) return;
     setInput("");
     setMessages((m) => [...m, { role: "user", text: message }]);
@@ -53,13 +64,27 @@ export function ConciergeClient() {
           <p className="page-lead mt-2.5">Vault-aware advice. Outbound booking only.</p>
         </div>
 
-        <div className="mt-6 flex-1 space-y-3.5 overflow-y-auto rounded-[var(--radius-xl)] border border-[var(--line)] bg-white/70 p-4 shadow-[var(--shadow-card)] md:p-6">
+        <div className="mt-4 flex flex-wrap gap-2">
+          {PROMPTS.map((p) => (
+            <button
+              key={p}
+              type="button"
+              disabled={busy}
+              onClick={() => void send(p)}
+              className="chip text-left hover:bg-black/10 disabled:opacity-50"
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6 flex-1 space-y-3.5 overflow-y-auto rounded-[var(--radius-xl)] border border-[var(--line)] bg-[var(--bg-elevated)]/80 p-4 shadow-[var(--shadow-card)] md:p-6">
           {messages.map((m, i) => (
             <div
               key={i}
               className={`max-w-[90%] rounded-[var(--radius-lg)] px-4 py-3 text-sm leading-relaxed ${
                 m.role === "user"
-                  ? "ml-auto bg-[var(--ink)] text-white shadow-sm"
+                  ? "ml-auto bg-[var(--ink)] text-[#f7f2e9] shadow-sm"
                   : "card-light mr-auto text-[var(--ink-soft)]"
               }`}
             >
@@ -67,6 +92,8 @@ export function ConciergeClient() {
               <p className="whitespace-pre-wrap">{m.text}</p>
             </div>
           ))}
+          {busy ? <p className="page-lead">Aura is thinking…</p> : null}
+          <div ref={bottom} />
         </div>
 
         <form

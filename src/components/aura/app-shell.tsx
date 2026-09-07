@@ -36,11 +36,11 @@ export function AppShell({
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
       <header
-        className="sticky top-0 z-40 border-b border-[var(--line-soft)] bg-[var(--bg)]/90 backdrop-blur-md"
+        className="sticky top-0 z-40 bg-[var(--header)] text-[#f7f2e9]"
         style={{ paddingTop: "var(--safe-top)" }}
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
-          <AuraBrand />
+          <AuraBrand inverted />
           <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
             {NAV.filter((n) => !n.center).map((item) => {
               const active =
@@ -55,8 +55,8 @@ export function AppShell({
                   className={cn(
                     "focus-ring flex items-center gap-2 rounded-full px-3.5 py-2 text-[11px] font-medium uppercase tracking-[0.16em] transition",
                     active
-                      ? "bg-[var(--ink)] text-white shadow-sm"
-                      : "text-[var(--muted)] hover:bg-black/[0.04] hover:text-[var(--ink)]",
+                      ? "bg-[var(--gold)] text-[var(--ink)]"
+                      : "text-[#f7f2e9]/70 hover:bg-white/10 hover:text-[#f7f2e9]",
                   )}
                 >
                   <Icon className="h-3.5 w-3.5" strokeWidth={active ? 2.25 : 2} />
@@ -66,7 +66,7 @@ export function AppShell({
             })}
             <Link
               href="/capture"
-              className="focus-ring ml-1 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--ink)] text-white shadow-sm transition hover:bg-black"
+              className="focus-ring ml-1 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--gold)] text-[var(--ink)] shadow-sm transition hover:bg-[#c9a97a]"
               aria-label="Capture"
             >
               <Plus className="h-5 w-5" />
@@ -74,13 +74,13 @@ export function AppShell({
           </nav>
           <div className="flex items-center gap-2">
             {live ? (
-              <span className="hidden items-center gap-1.5 rounded-full bg-[var(--ink)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-white sm:inline-flex">
+              <span className="hidden items-center gap-1.5 rounded-full border border-[var(--gold)]/40 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--gold)] sm:inline-flex">
                 <span className="live-dot" /> Live
               </span>
             ) : null}
             <Link
               href="/concierge"
-              className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-white shadow-sm transition hover:border-[var(--line-strong)] hover:bg-[var(--bg)]"
+              className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-[#f7f2e9] transition hover:border-[var(--gold)]/50 hover:bg-white/10"
               aria-label="Aura concierge chat"
             >
               <MessageCircle className="h-5 w-5" />
@@ -89,7 +89,7 @@ export function AppShell({
               <button
                 type="button"
                 onClick={() => void signOut({ callbackUrl: "/" })}
-                className="focus-ring hidden h-11 items-center gap-2 rounded-full border border-[var(--line)] bg-white px-3.5 text-xs text-[var(--muted)] transition hover:border-[var(--line-strong)] hover:text-[var(--ink)] md:inline-flex"
+                className="focus-ring hidden h-11 items-center gap-2 rounded-full border border-white/15 px-3.5 text-xs text-[#f7f2e9]/75 transition hover:border-[var(--gold)]/40 hover:text-[#f7f2e9] md:inline-flex"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 Sign out
@@ -97,19 +97,20 @@ export function AppShell({
             ) : (
               <Link
                 href="/settings"
-                className="hidden text-[11px] uppercase tracking-[0.16em] text-[var(--muted)] transition hover:text-[var(--ink)] md:inline"
+                className="hidden text-[11px] uppercase tracking-[0.16em] text-[#f7f2e9]/70 transition hover:text-[#f7f2e9] md:inline"
               >
                 Settings
               </Link>
             )}
           </div>
         </div>
+        <div className="h-px bg-gradient-to-r from-transparent via-[var(--gold)] to-transparent" />
       </header>
 
       <div className="aura-shell mx-auto max-w-6xl px-4 md:px-6">{children}</div>
 
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--line)] bg-[var(--bg)]/95 backdrop-blur-md md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--line)] bg-[var(--header)] text-[#f7f2e9] md:hidden"
         style={{ paddingBottom: "var(--safe-bottom)" }}
         aria-label="Mobile"
       >
@@ -125,7 +126,7 @@ export function AppShell({
                 <li key={item.href} className="flex justify-center">
                   <Link
                     href={item.href}
-                    className="focus-ring -mt-5 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--ink)] text-white shadow-lg shadow-black/20 transition hover:bg-black"
+                    className="focus-ring -mt-5 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--gold)] text-[var(--ink)] shadow-lg shadow-black/30 transition hover:bg-[#c9a97a]"
                     aria-label="Capture"
                   >
                     <Plus className="h-6 w-6" />
@@ -139,7 +140,7 @@ export function AppShell({
                   href={item.href}
                   className={cn(
                     "focus-ring flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-[var(--radius-md)] text-[10px] font-medium uppercase tracking-[0.14em] transition",
-                    active ? "text-[var(--ink)]" : "text-[var(--muted)]",
+                    active ? "text-[var(--gold)]" : "text-[#f7f2e9]/55",
                   )}
                 >
                   <Icon className={cn("h-5 w-5", active && "stroke-[2.25]")} />
