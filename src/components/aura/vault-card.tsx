@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { occasionLabel } from "@/lib/occasions";
+import { statusLabel } from "@/lib/place-status";
 
 export type VaultItem = {
   placeId: string;
@@ -59,6 +60,7 @@ export function VaultCard({ item }: { item: VaultItem }) {
             <span className="chip">{item.primaryType.replace(/_/g, " ")}</span>
           ) : null}
           {occasionLabel(item.occasion) ? <span className="chip">{occasionLabel(item.occasion)}</span> : null}
+          <span className="chip">{statusLabel(item.status)}</span>
         </div>
       </div>
     </Link>

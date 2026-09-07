@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 
 const STEPS = [
@@ -31,11 +31,29 @@ const EXAMPLES = [
 
 export function LandingClient({ authReady }: { authReady: boolean }) {
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
 
   async function demo() {
     setBusy(true);
     try {
-      await signIn("demo", { callbackUrl: "/", redirect: true });
+      const csrfRes = await fetch("/api/auth/csrf");
+      const csrf = await csrfRes.json();
+      const token = csrf?.csrfToken;
+      if (!token) {
+        await signIn("demo", { callbackUrl: "/", redirect: true });
+        return;
+      }
+      await fetch("/api/auth/callback/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ csrfToken: token, callbackUrl: "/" }),
+        redirect: "manual",
+      });
+      window.location.assign("/");
     } finally {
       setBusy(false);
     }
@@ -45,42 +63,48 @@ export function LandingClient({ authReady }: { authReady: boolean }) {
     <div className="min-h-screen bg-[var(--bg)]">
       <SiteHeader authReady={authReady} />
       <main>
-        <section className="mx-auto max-w-6xl px-4 pb-16 pt-12 md:px-6 md:pb-24 md:pt-20">
-          <p className="kicker">Aura Concierge Elite · formerly DateDrop</p>
-          <h1 className="page-title serif mt-4 max-w-3xl text-5xl md:text-7xl">
-            Drop a screenshot.
-            <span className="serif-italic mt-2 block text-[var(--muted)]">Leave with a plan.</span>
-          </h1>
-          <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-[var(--muted)]">
-            Screenshots of restaurants and trips pile up and never become dinner. Aura turns them into a
-            private vault, climate-aware dates, and outbound booking links. We don&apos;t have live table
-            inventory — and we don&apos;t scrape Resy.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => void demo()}
-              disabled={busy}
-              className="focus-ring inline-flex min-h-[48px] items-center rounded-full bg-[var(--ink)] px-6 text-sm font-medium text-white transition hover:bg-black disabled:opacity-60"
-            >
-              {busy ? "Entering…" : "Continue as demo"}
-            </button>
-            <Link
-              href="/sign-in"
-              className="focus-ring inline-flex min-h-[48px] items-center rounded-full border border-[var(--line-strong)] bg-white px-6 text-sm transition hover:bg-black/[0.03]"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/capture"
-              className="focus-ring inline-flex min-h-[48px] items-center px-2 text-sm text-[var(--muted)] underline-offset-4 hover:text-[var(--ink)] hover:underline"
-            >
-              Skip to Capture
-            </Link>
+        <section className="relative overflow-hidden bg-[var(--header)] text-[#f7f2e9]">
+          <div className="pointer-events-none absolute inset-0 opacity-40" aria-hidden>
+            <div className="absolute -left-24 top-0 h-80 w-80 rounded-full bg-[var(--gold)]/20 blur-3xl" />
+            <div className="absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-[var(--gold)]/10 blur-3xl" />
+          </div>
+          <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-14 md:px-6 md:pb-24 md:pt-20">
+            <p className="kicker !text-[var(--gold)]">Aura Concierge Elite · formerly DateDrop</p>
+            <h1 className="page-title serif mt-5 max-w-3xl text-5xl text-[#f7f2e9] md:text-7xl">
+              Drop a screenshot.
+              <span className="serif-italic mt-2 block text-[var(--gold)]">Leave with a plan.</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-[#f7f2e9]/72">
+              Screenshots of restaurants and trips pile up and never become dinner. Aura turns them into a
+              private vault, climate-aware dates, and outbound booking links. We don&apos;t have live table
+              inventory — and we don&apos;t scrape Resy.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => void demo()}
+                disabled={busy || !ready}
+                className="focus-ring inline-flex min-h-[48px] items-center rounded-full bg-[var(--gold)] px-6 text-sm font-medium text-[var(--ink)] transition hover:bg-[#c9a97a] disabled:opacity-60"
+              >
+                {busy ? "Entering…" : "Continue as demo"}
+              </button>
+              <Link
+                href="/sign-in"
+                className="focus-ring inline-flex min-h-[48px] items-center rounded-full border border-white/20 px-6 text-sm text-[#f7f2e9] transition hover:border-[var(--gold)]/50"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/capture"
+                className="focus-ring inline-flex min-h-[48px] items-center px-2 text-sm text-[#f7f2e9]/70 underline-offset-4 hover:text-[var(--gold)] hover:underline"
+              >
+                Skip to Capture
+              </Link>
+            </div>
           </div>
         </section>
 
-        <section className="border-y border-[var(--line)] bg-white/50">
+        <section className="border-y border-[var(--line)] bg-[var(--bg-elevated)]/80">
           <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-3 md:px-6 md:py-16">
             {STEPS.map((s) => (
               <div key={s.title}>
@@ -100,9 +124,9 @@ export function LandingClient({ authReady }: { authReady: boolean }) {
             Not a generic stash app. Not a Dorsia-style access club.
           </h2>
           <p className="page-lead mt-4 max-w-2xl">
-            Save-to-map apps (Stasht, Tote, GoPlaces) stop at pins. Luxury booking apps sell tables via
-            restaurant relationships. Aura sits in the conversion gap: confirm the place, tag the
-            occasion, plan the dates, open the booking site when the window is real.
+            Save-to-map apps stop at pins. Luxury booking apps sell tables. Aura sits in the conversion
+            gap: confirm the place, tag the occasion, plan the dates, open the booking site when the
+            window is real.
           </p>
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
             {EXAMPLES.map((ex) => (
@@ -117,22 +141,20 @@ export function LandingClient({ authReady }: { authReady: boolean }) {
 
         <section className="mx-auto max-w-6xl px-4 pb-20 md:px-6">
           <div className="card-dark rounded-[var(--radius-2xl)] px-6 py-10 md:px-12 md:py-14">
-            <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-white/45">Honest product</p>
-            <h2 className="serif-italic mt-3 text-3xl text-white md:text-4xl">
-              We identify. You book.
-            </h2>
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/70">
-              No fake time slots. No api.resy.com. No payments. Premium is complimentary while we prove
-              the loop. Camera and paste work on mobile — that is where the screenshots live.
+            <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-[var(--gold)]">Honest product</p>
+            <h2 className="serif-italic mt-3 text-3xl text-[#f7f2e9] md:text-4xl">We identify. You book.</h2>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#f7f2e9]/70">
+              No fake time slots. No api.resy.com. No payments. Camera and paste work on mobile — that is
+              where the screenshots live.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/capture"
-                className="focus-ring inline-flex min-h-[48px] items-center rounded-full bg-white px-6 text-sm font-medium text-black"
+                className="focus-ring inline-flex min-h-[48px] items-center rounded-full bg-[var(--gold)] px-6 text-sm font-medium text-[var(--ink)]"
               >
                 Drop a screenshot
               </Link>
-              <Link href="/privacy" className="inline-flex min-h-[48px] items-center text-sm text-white/60 hover:text-white">
+              <Link href="/privacy" className="inline-flex min-h-[48px] items-center text-sm text-[#f7f2e9]/60 hover:text-[#f7f2e9]">
                 Privacy
               </Link>
             </div>

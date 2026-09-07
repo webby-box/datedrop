@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, ArrowLeft } from "lucide-react";
 import { OccasionChips } from "./occasion-chips";
 import { toast } from "sonner";
+import { PLACE_STATUSES } from "@/lib/place-status";
+import { cn } from "@/lib/utils";
 
 type Detail = {
   place: {
@@ -25,12 +27,14 @@ type Detail = {
   copy: string;
   draftPlan?: { boardId?: string; city?: string; dates?: { start?: string; end?: string }; partySize?: number };
   occasion?: string;
+  status?: string;
 };
 
 export function VaultDetailClient({ id }: { id: string }) {
   const [data, setData] = useState<Detail | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [occasion, setOccasion] = useState("want");
+  const [status, setStatus] = useState("want");
 
   useEffect(() => {
     void (async () => {
@@ -42,6 +46,7 @@ export function VaultDetailClient({ id }: { id: string }) {
       }
       setData(json);
       setOccasion(json.occasion || "want");
+      setStatus(json.status || json.boardPlaces?.[0]?.status || "want");
     })();
   }, [id]);
 
@@ -90,6 +95,35 @@ export function VaultDetailClient({ id }: { id: string }) {
                     })();
                   }}
                 />
+              </div>
+              <div className="mt-5">
+                <p className="kicker mb-3">Status</p>
+                <div className="flex flex-wrap gap-2">
+                  {PLACE_STATUSES.map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => {
+                        setStatus(s.id);
+                        void (async () => {
+                          const res = await fetch(`/api/vault/${encodeURIComponent(id)}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ status: s.id }),
+                          });
+                          if (!res.ok) toast.error("Could not save status");
+                          else toast.success("Status saved");
+                        })();
+                      }}
+                      className={cn(
+                        "focus-ring rounded-full px-3.5 py-2 text-[11px] font-medium uppercase tracking-[0.14em]",
+                        status === s.id ? "bg-[var(--ink)] text-white" : "bg-black/[0.04] text-[var(--muted)]",
+                      )}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {data.place.rating ? (
