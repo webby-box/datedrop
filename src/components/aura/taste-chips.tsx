@@ -44,7 +44,9 @@ export function TasteChips({ editable = true }: { editable?: boolean }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ profiles: next }),
     });
+    const json = await res.json().catch(() => ({}));
     if (!res.ok) toast.error("Could not save taste profile");
+    else if (json.persisted === false) toast.message("Taste updated for this session");
     else toast.success("Taste updated");
   }
 

@@ -6,12 +6,14 @@ import { VaultCard, type VaultItem } from "./vault-card";
 import { EmptyState } from "./empty-state";
 import { CardSkeleton } from "./skeleton";
 import { Input } from "@/components/ui/input";
+import { OccasionChips } from "./occasion-chips";
 
 export function VaultClient() {
   const [items, setItems] = useState<VaultItem[]>([]);
   const [cities, setCities] = useState<string[]>([]);
   const [q, setQ] = useState("");
   const [city, setCity] = useState("");
+  const [occasion, setOccasion] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,6 +23,7 @@ export function VaultClient() {
         const params = new URLSearchParams();
         if (q) params.set("q", q);
         if (city) params.set("city", city);
+        if (occasion) params.set("occasion", occasion);
         const res = await fetch(`/api/vault?${params}`);
         const json = await res.json();
         if (res.ok) {
@@ -31,7 +34,7 @@ export function VaultClient() {
       })();
     }, 200);
     return () => clearTimeout(t);
-  }, [q, city]);
+  }, [q, city, occasion]);
 
   const countLabel = useMemo(() => `${items.length} place${items.length === 1 ? "" : "s"}`, [items.length]);
 
@@ -42,7 +45,7 @@ export function VaultClient() {
           <div>
             <p className="kicker">The Vault</p>
             <h1 className="page-title serif mt-2 text-4xl md:text-5xl">Saved rooms</h1>
-            <p className="page-lead mt-2.5">{countLabel} · screenshots & confirmed pins</p>
+            <p className="page-lead mt-2.5">{countLabel} · filter by city or occasion</p>
           </div>
           <div className="flex w-full flex-col gap-2.5 sm:flex-row md:w-auto md:min-w-[380px]">
             <Input
@@ -65,6 +68,10 @@ export function VaultClient() {
               ))}
             </select>
           </div>
+        </div>
+
+        <div className="mt-6">
+          <OccasionChips value={occasion} onChange={setOccasion} allowAll />
         </div>
 
         <div className="mt-8 md:mt-10">

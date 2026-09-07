@@ -175,20 +175,34 @@ export function CaptureClient() {
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--ink)] text-white shadow-sm">
             <Upload className="h-6 w-6" />
           </div>
-          <p className="serif-italic mt-5 text-2xl md:text-[1.75rem]">Drop screenshots</p>
-          <p className="mt-2 text-sm text-[var(--muted)]">PNG / JPG · up to 4</p>
-          <label className="mt-6 inline-flex cursor-pointer">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={(e) => onFiles(e.target.files)}
-            />
-            <span className="focus-ring inline-flex min-h-[44px] items-center rounded-full bg-[var(--ink)] px-5 text-sm text-white transition hover:bg-black">
-              Choose files
-            </span>
-          </label>
+          <p className="serif-italic mt-5 text-2xl md:text-[1.75rem]">Drop screenshots here</p>
+          <p className="mt-2 text-sm text-[var(--muted)]">PNG / JPG / HEIC · up to 4 · camera or camera roll</p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <label className="inline-flex cursor-pointer">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => onFiles(e.target.files)}
+              />
+              <span className="focus-ring inline-flex min-h-[44px] items-center rounded-full bg-[var(--ink)] px-5 text-sm text-white transition hover:bg-black">
+                Choose files
+              </span>
+            </label>
+            <label className="inline-flex cursor-pointer">
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={(e) => onFiles(e.target.files)}
+              />
+              <span className="focus-ring inline-flex min-h-[44px] items-center rounded-full border border-[var(--line-strong)] bg-white px-5 text-sm text-[var(--ink)] transition hover:bg-black/[0.03]">
+                Use camera
+              </span>
+            </label>
+          </div>
           {files.length ? (
             <ul className="mt-5 space-y-1.5 text-xs text-[var(--muted)]">
               {files.map((f) => (
@@ -210,7 +224,7 @@ export function CaptureClient() {
             <Input
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://maps.google.com/…"
+              placeholder="maps.app.goo.gl or maps.google.com…"
               className="control-lg h-12 pl-11"
             />
           </div>

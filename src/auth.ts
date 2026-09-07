@@ -19,7 +19,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Credentials({
       id: "demo",
       name: "Demo",
-      credentials: {},
+      credentials: {
+        intent: { label: "Intent", type: "text" },
+      },
       async authorize() {
         return {
           id: "demo-local",

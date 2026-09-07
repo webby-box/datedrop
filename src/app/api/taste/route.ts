@@ -24,7 +24,16 @@ export async function PUT(req: Request) {
   try {
     const user = await requireUser();
     if (!mongoConfigured()) {
-      return NextResponse.json({ error: "MONGODB_URI is not set." }, { status: 503 });
+      const body = (await req.json()) as { profiles?: string[] };
+      const profiles = (body.profiles || [])
+        .map((p) => String(p).trim())
+        .filter(Boolean)
+        .slice(0, 12);
+      return NextResponse.json({
+        profiles,
+        persisted: false,
+        note: "Demo session — taste chips update locally until MongoDB is configured.",
+      });
     }
     const body = (await req.json()) as { profiles?: string[] };
     const profiles = (body.profiles || [])

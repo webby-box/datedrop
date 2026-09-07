@@ -20,7 +20,8 @@ const PAGE_PREFIXES = [
 
 function isProtectedPage(pathname: string) {
   if (pathname.startsWith("/api/")) return false;
-  if (pathname === "/") return true;
+  // Public marketing landing — signed-in users still see Explore via HomeGate.
+  if (pathname === "/") return false;
   return PAGE_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 

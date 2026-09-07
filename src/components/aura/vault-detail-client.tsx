@@ -6,6 +6,8 @@ import { AppShell } from "./app-shell";
 import { Skeleton } from "./skeleton";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, ArrowLeft } from "lucide-react";
+import { OccasionChips } from "./occasion-chips";
+import { toast } from "sonner";
 
 type Detail = {
   place: {
@@ -22,11 +24,13 @@ type Detail = {
   booking: { url: string; label: string; platform: string };
   copy: string;
   draftPlan?: { boardId?: string; city?: string; dates?: { start?: string; end?: string }; partySize?: number };
+  occasion?: string;
 };
 
 export function VaultDetailClient({ id }: { id: string }) {
   const [data, setData] = useState<Detail | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [occasion, setOccasion] = useState("want");
 
   useEffect(() => {
     void (async () => {
@@ -37,6 +41,7 @@ export function VaultDetailClient({ id }: { id: string }) {
         return;
       }
       setData(json);
+      setOccasion(json.occasion || "want");
     })();
   }, [id]);
 
@@ -68,6 +73,24 @@ export function VaultDetailClient({ id }: { id: string }) {
               <p className="kicker mt-6">{data.board?.city || "Vault"}</p>
               <h1 className="serif-italic mt-2 text-4xl leading-[1.05] md:text-5xl">{data.place.name}</h1>
               <p className="mt-2 text-sm text-[var(--muted)]">{data.place.formattedAddress}</p>
+              <div className="mt-5">
+                <p className="kicker mb-3">Occasion</p>
+                <OccasionChips
+                  value={occasion}
+                  onChange={(next) => {
+                    setOccasion(next);
+                    void (async () => {
+                      const res = await fetch(`/api/vault/${encodeURIComponent(id)}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ occasion: next }),
+                      });
+                      if (!res.ok) toast.error("Could not save occasion");
+                      else toast.success("Occasion saved");
+                    })();
+                  }}
+                />
+              </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {data.place.rating ? (
                   <span className="rounded-full chip">

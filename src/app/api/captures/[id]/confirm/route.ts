@@ -6,6 +6,7 @@ import { mongoConfigured } from "@/lib/mongodb";
 import { textSearch, upsertPlaceFromMatch, placeIdOf } from "@/lib/places";
 import type { PlaceMatch } from "@/lib/types";
 import { generateAlertsForUser } from "@/lib/alerts";
+import { isOccasionId } from "@/lib/occasions";
 
 function cityFromAddress(addr: string, fallback?: string) {
   const parts = addr.split(",").map((s) => s.trim()).filter(Boolean);
@@ -33,6 +34,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       /** @deprecated use externalPlaceId */
       googlePlaceId?: string;
       query?: string;
+      occasion?: string;
     };
 
     const capCol = await captures();
@@ -95,6 +97,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       board = await boardCol.findOne({ _id: inserted.insertedId });
     }
 
+    const occasion = body.occasion && isOccasionId(body.occasion) ? body.occasion : "want";
     const bp = await boardPlaces();
     await bp.updateOne(
       { boardId: board!._id!.toString(), placeId: pid },
@@ -107,6 +110,9 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
           sourceScreenshotUrl: rec.blobUrls[0],
           status: "want",
           createdAt: new Date(),
+        },
+        $set: {
+          occasion,
         },
       },
       { upsert: true },

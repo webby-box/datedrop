@@ -3,6 +3,7 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["mongodb", "sharp"],
+  allowedDevOrigins: ["127.0.0.1", "localhost"],
   experimental: {
     // Next 16 proxy buffers request bodies; raise so capture uploads aren't truncated.
     proxyClientMaxBodySize: "12mb",

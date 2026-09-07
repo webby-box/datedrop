@@ -10,7 +10,7 @@ export function AuthScreens({ ready }: { ready: boolean }) {
   async function enterDemo() {
     setDemoBusy(true);
     try {
-      await signIn("demo", { callbackUrl: "/" });
+      await signIn("demo", { callbackUrl: "/", redirect: true });
     } finally {
       setDemoBusy(false);
     }

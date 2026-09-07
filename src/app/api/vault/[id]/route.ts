@@ -6,6 +6,7 @@ import { mongoConfigured } from "@/lib/mongodb";
 import { placeLookupFilter, placeIdOf } from "@/lib/places";
 import { getOrCreateLogistics } from "@/lib/logistics";
 import { bookingDeepLink, NO_INVENTORY_COPY } from "@/lib/booking";
+import { isOccasionId } from "@/lib/occasions";
 
 export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
@@ -51,6 +52,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
       },
       board: board ? { ...board, _id: board._id?.toString() } : null,
       boardPlaces: links.map((l) => ({ ...l, _id: l._id?.toString() })),
+      occasion: links[0]?.occasion || "want",
       imageUrl: links.find((l) => l.sourceScreenshotUrl)?.sourceScreenshotUrl,
       logistics,
       booking: book,
@@ -62,6 +64,34 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
         city: board?.city,
       },
     });
+  } catch (err) {
+    const e = err as Error & { status?: number };
+    return NextResponse.json({ error: e.message }, { status: e.status || 500 });
+  }
+}
+
+export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  try {
+    const user = await requireUser();
+    if (!mongoConfigured()) {
+      return NextResponse.json({ error: "MONGODB_URI is not set." }, { status: 503 });
+    }
+    const { id } = await ctx.params;
+    const body = (await req.json()) as { occasion?: string };
+    if (!body.occasion || !isOccasionId(body.occasion)) {
+      return NextResponse.json({ error: "Pick a valid occasion." }, { status: 400 });
+    }
+    const place = await (await places()).findOne(placeLookupFilter(id));
+    if (!place) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const pid = placeIdOf(place);
+    const result = await (await boardPlaces()).updateMany(
+      { userId: user.userId, placeId: { $in: [id, pid].filter(Boolean) } },
+      { $set: { occasion: body.occasion } },
+    );
+    if (!result.matchedCount) {
+      return NextResponse.json({ error: "Not in your vault" }, { status: 404 });
+    }
+    return NextResponse.json({ ok: true, occasion: body.occasion });
   } catch (err) {
     const e = err as Error & { status?: number };
     return NextResponse.json({ error: e.message }, { status: e.status || 500 });
