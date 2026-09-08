@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { BoardMap } from "./board-map";
 import { Badge } from "@/components/ui/badge";
 import { NO_INVENTORY_COPY } from "@/lib/booking";
+import { useRouteId } from "@/lib/use-route-id";
 
 type Place = {
   externalPlaceId?: string;
@@ -27,7 +28,7 @@ function pid(p: { externalPlaceId?: string; googlePlaceId?: string; name?: strin
 }
 
 export function PlaceClient({
-  id,
+  id: paramId,
   attribution,
 }: {
   id: string;
@@ -35,6 +36,7 @@ export function PlaceClient({
   /** @deprecated unused */
   mapsKey?: string;
 }) {
+  const id = useRouteId(paramId);
   const [data, setData] = useState<{
     place: Place;
     screenshots: string[];

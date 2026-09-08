@@ -4,6 +4,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
+import { homeAssignPath, isStaticApp } from "@/lib/static-mode";
 
 const STEPS = [
   {
@@ -53,7 +54,7 @@ export function LandingClient({ authReady }: { authReady: boolean }) {
         body: new URLSearchParams({ csrfToken: token, callbackUrl: "/" }),
         redirect: "manual",
       });
-      window.location.assign("/");
+      window.location.assign(homeAssignPath());
     } finally {
       setBusy(false);
     }
@@ -78,6 +79,7 @@ export function LandingClient({ authReady }: { authReady: boolean }) {
               Screenshots of restaurants and trips pile up and never become dinner. Aura turns them into a
               private vault, climate-aware dates, and outbound booking links. We don&apos;t have live table
               inventory — and we don&apos;t scrape Resy.
+              {isStaticApp ? " This GitHub Pages build is a browser-only demo (mock match, localStorage)." : ""}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <button

@@ -7,6 +7,7 @@ import { AppShell } from "./app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, Link2, ClipboardPaste, Camera } from "lucide-react";
+import { captureHref } from "@/lib/static-mode";
 
 const MAX_EDGE = 1600;
 const JPEG_QUALITY = 0.82;
@@ -188,7 +189,7 @@ export function CaptureClient() {
         return;
       }
       toast.success("Reading the chrome…", { id: toastId });
-      router.push(`/captures/${json.id}`);
+      router.push(captureHref(json.id));
     } catch {
       toast.error("Network error", { id: toastId });
     } finally {
@@ -297,7 +298,7 @@ export function CaptureClient() {
               {recent.map((c) => (
                 <li key={c._id}>
                   <a
-                    href={`/captures/${c._id}`}
+                    href={captureHref(c._id)}
                     className="card-light card-interactive flex items-center justify-between rounded-[var(--radius-lg)] px-4 py-3 text-sm"
                   >
                     <span className="truncate text-[var(--muted)]">{c.pastedUrl || "Screenshot"}</span>

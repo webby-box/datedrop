@@ -9,6 +9,7 @@ import { EmptyState } from "./empty-state";
 import { CardSkeleton } from "./skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { planHref } from "@/lib/static-mode";
 
 type PlanBoard = {
   _id: string;
@@ -72,7 +73,7 @@ export function PlansClient() {
     toast.success("Plan saved");
     setCity("");
     await load();
-    if (json.board?._id) router.push(`/plans/${json.board._id}`);
+    if (json.board?._id) router.push(planHref(json.board._id));
   }
 
   return (
@@ -158,7 +159,7 @@ export function PlansClient() {
                 boards.map((b) => (
                   <Link
                     key={b._id}
-                    href={`/plans/${b._id}`}
+                    href={planHref(b._id)}
                     className="card-light card-interactive fade-up flex items-center justify-between gap-4 rounded-[var(--radius-lg)] p-5"
                   >
                     <div>

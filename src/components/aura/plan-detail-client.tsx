@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BoardMap } from "@/components/board-map";
 import { ArrowLeft, Download } from "lucide-react";
+import { useRouteId } from "@/lib/use-route-id";
+import { vaultHref } from "@/lib/static-mode";
 
 type Board = {
   _id: string;
@@ -37,7 +39,8 @@ type Plan = {
 };
 type ChecklistItem = { name: string; url: string; label: string; copy: string };
 
-export function PlanDetailClient({ id }: { id: string }) {
+export function PlanDetailClient({ id: paramId }: { id: string }) {
+  const id = useRouteId(paramId);
   const [board, setBoard] = useState<Board | null>(null);
   const [places, setPlaces] = useState<Place[]>([]);
   const [plan, setPlan] = useState<Plan | null>(null);
@@ -235,7 +238,7 @@ export function PlanDetailClient({ id }: { id: string }) {
                     places.map((p) => (
                       <li key={p.name}>
                         <Link
-                          href={`/vault/${encodeURIComponent(p.externalPlaceId || p.googlePlaceId || "")}`}
+                          href={vaultHref(p.externalPlaceId || p.googlePlaceId || "")}
                           className="serif-italic text-xl hover:underline"
                         >
                           {p.name}

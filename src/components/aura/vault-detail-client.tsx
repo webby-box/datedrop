@@ -10,6 +10,8 @@ import { OccasionChips } from "./occasion-chips";
 import { toast } from "sonner";
 import { PLACE_STATUSES } from "@/lib/place-status";
 import { cn } from "@/lib/utils";
+import { useRouteId } from "@/lib/use-route-id";
+import { planHref } from "@/lib/static-mode";
 
 type Detail = {
   place: {
@@ -30,7 +32,8 @@ type Detail = {
   status?: string;
 };
 
-export function VaultDetailClient({ id }: { id: string }) {
+export function VaultDetailClient({ id: paramId }: { id: string }) {
+  const id = useRouteId(paramId);
   const [data, setData] = useState<Detail | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [occasion, setOccasion] = useState("want");
@@ -149,7 +152,7 @@ export function VaultDetailClient({ id }: { id: string }) {
                 </Button>
                 {data.draftPlan?.boardId ? (
                   <Button variant="outline" asChild>
-                    <Link href={`/plans/${data.draftPlan.boardId}`}>Open plan</Link>
+                    <Link href={planHref(data.draftPlan.boardId)}>Open plan</Link>
                   </Button>
                 ) : null}
               </div>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { alertHref } from "@/lib/static-mode";
 
 export type AlertCardData = {
   _id: string;
@@ -27,7 +28,7 @@ export function AlertCard({ alert, className }: { alert: AlertCardData; classNam
   const g = gradients[alert._id.charCodeAt(alert._id.length - 1) % gradients.length];
   return (
     <Link
-      href={`/alerts/${alert._id}`}
+      href={alertHref(alert._id)}
       className={cn(
         "card-dark fade-up group relative block overflow-hidden rounded-[var(--radius-xl)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-dark)]",
         className,

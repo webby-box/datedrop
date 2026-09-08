@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
+import { homeAssignPath } from "@/lib/static-mode";
 
 export function AuthScreens({ ready }: { ready: boolean }) {
   const [demoBusy, setDemoBusy] = useState(false);
@@ -20,7 +21,7 @@ export function AuthScreens({ ready }: { ready: boolean }) {
           body: new URLSearchParams({ csrfToken: token, callbackUrl: "/" }),
           redirect: "manual",
         });
-        window.location.assign("/");
+        window.location.assign(homeAssignPath());
         return;
       }
       await signIn("demo", { callbackUrl: "/", redirect: true });

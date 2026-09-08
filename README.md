@@ -2,7 +2,19 @@
 
 Luxury travel and dining conversion layer (formerly DateDrop). Capture screenshots into The Vault, tag an occasion, receive booking-window alerts, and open outbound booking links. No live table inventory. No Resy/OpenTable scraping.
 
-Live: https://datedrop.onrender.com
+Live: https://webby-box.github.io/datedrop/
+
+GitHub Pages is a **static browser demo** (mock vision, localStorage, demo session). The Node host on Render (`https://datedrop.onrender.com`) still runs real Auth.js, MongoDB, and vision when you need the full stack.
+
+## GitHub Pages
+
+1. Merge to `main` — the `Deploy GitHub Pages` workflow exports the app and pushes the `gh-pages` branch.
+2. In the repo: **Settings → Pages → Deploy from a branch → `gh-pages` / `/` (root)**.
+3. Open https://webby-box.github.io/datedrop/
+
+Do not set `NEXT_PUBLIC_STATIC` on Render. Pages build uses `npm run build:pages` (`GITHUB_PAGES=1`, `basePath=/datedrop`).
+
+## Market position (validated 2026)
 
 ## Market position (validated 2026)
 
@@ -32,4 +44,4 @@ Geoapify/LocationIQ/Nominatim, MapLibre+OpenFreeMap, Groq/OpenRouter/Gemini, Aut
 
 Booking = outbound links only. Env vars: `.env.example`.
 
-Deploy via Render (`render.yaml`) on push to `main`.
+Deploy via GitHub Pages (`npm run build:pages` → `gh-pages`). Render (`render.yaml`) remains available for the Node API host.

@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
+const pages = process.env.GITHUB_PAGES === "1";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/datedrop";
+
 const nextConfig: NextConfig = {
   serverExternalPackages: ["mongodb", "sharp"],
   allowedDevOrigins: ["127.0.0.1", "localhost"],
@@ -9,15 +12,25 @@ const nextConfig: NextConfig = {
     proxyClientMaxBodySize: "12mb",
   },
   images: {
+    unoptimized: pages,
     remotePatterns: [
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
       { protocol: "https", hostname: "*.blob.vercel-storage.com" },
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
+  ...(pages
+    ? {
+        output: "export" as const,
+        trailingSlash: true,
+        basePath,
+        assetPrefix: basePath,
+      }
+    : {}),
 };
 
 export default nextConfig;
 
-// Enables CF bindings during `next dev`. Safe for standard `next build` / Node start.
-initOpenNextCloudflareForDev();
+if (!pages) {
+  initOpenNextCloudflareForDev();
+}

@@ -1,14 +1,14 @@
-export const dynamic = "force-dynamic";
+"use client";
 
 import { AppShell } from "@/components/aura/app-shell";
 import { DeleteData } from "@/components/delete-data";
-import { currentUserSafe } from "@/lib/auth";
-import { getEnvStatus } from "@/lib/env";
+import { isStaticApp } from "@/lib/static-mode";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
-export default async function SettingsPage() {
-  const user = await currentUserSafe();
-  const env = getEnvStatus();
+export default function SettingsPage() {
+  const { data } = useSession();
+  const user = data?.user;
   return (
     <AppShell>
       <div className="mx-auto max-w-xl py-8 md:py-12">
@@ -18,8 +18,8 @@ export default async function SettingsPage() {
         <dl className="card-light mt-8 space-y-0 overflow-hidden rounded-[var(--radius-xl)] p-1">
           {[
             ["Email", user?.email || "not signed in"],
-            ["User id", user?.userId || "—"],
-            ["Mode", user?.demo ? "demo (Google OAuth keys missing)" : "Google"],
+            ["User id", user?.email || "—"],
+            ["Mode", isStaticApp ? "GitHub Pages (browser-only demo)" : "Session"],
           ].map(([dt, dd], i) => (
             <div
               key={dt}
@@ -34,8 +34,9 @@ export default async function SettingsPage() {
         </dl>
 
         <p className="mt-6 text-xs leading-relaxed text-[var(--muted)]">
-          Stack: {env.placesProvider} · {env.llmProvider} · Env:{" "}
-          {env.missing.length ? `missing ${env.missing.join(", ")}` : "all keys present"}.
+          {isStaticApp
+            ? "This GitHub Pages build stores captures in localStorage. Live vision, MongoDB, and Google sign-in run on the Node host."
+            : "Account details come from your current Auth.js session."}
         </p>
         <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
           <Link href="/privacy" className="underline underline-offset-4 decoration-[var(--line-strong)] transition hover:text-[var(--ink)]">
