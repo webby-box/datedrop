@@ -2,10 +2,16 @@
 
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
+import { isStaticApp, appBasePath } from "@/lib/static-mode";
+import { installStaticFetch } from "@/lib/static-fetch";
+
+if (typeof window !== "undefined" && isStaticApp) {
+  installStaticFetch();
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
+    <SessionProvider basePath={`${appBasePath}/api/auth`}>
       {children}
       <Toaster
         theme="light"

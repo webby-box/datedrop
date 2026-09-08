@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { bookingDeepLink, NO_INVENTORY_COPY } from "@/lib/booking";
+import { useRouteId } from "@/lib/use-route-id";
+import { boardPlanHref, placeHref } from "@/lib/static-mode";
 
 type Place = {
   externalPlaceId?: string;
@@ -27,7 +29,7 @@ function pid(p: Place) {
 }
 
 export function BoardClient({
-  id,
+  id: paramId,
   attribution,
 }: {
   id: string;
@@ -35,6 +37,7 @@ export function BoardClient({
   /** @deprecated unused — MapLibre needs no Google key */
   mapsKey?: string;
 }) {
+  const id = useRouteId(paramId);
   const [data, setData] = useState<{
     board: { title: string; city: string; startDate?: string; endDate?: string; partySize: number };
     places: Place[];
@@ -109,7 +112,7 @@ export function BoardClient({
             <Input type="number" min={1} max={20} value={party} onChange={(e) => setParty(Number(e.target.value))} />
           </label>
           <Button type="submit" className="w-full">Save dates</Button>
-          <Link href={`/boards/${id}/plan`} className="block text-center text-sm text-[#111]">
+          <Link href={boardPlanHref(id)} className="block text-center text-sm text-[#111]">
             Open plan →
           </Link>
         </form>
@@ -131,7 +134,7 @@ export function BoardClient({
               return (
                 <li key={key} className="flex flex-wrap items-center justify-between gap-3 py-4">
                   <div>
-                    <Link href={`/places/${encodeURIComponent(key)}`} className="serif text-2xl">
+                    <Link href={placeHref(key)} className="serif text-2xl">
                       {p.name}
                     </Link>
                     <p className="text-sm text-[var(--muted)]">{p.formattedAddress}</p>

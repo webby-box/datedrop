@@ -5,6 +5,7 @@ import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { occasionLabel } from "@/lib/occasions";
 import { statusLabel } from "@/lib/place-status";
+import { vaultHref } from "@/lib/static-mode";
 
 export type VaultItem = {
   placeId: string;
@@ -36,7 +37,7 @@ export function VaultCard({ item }: { item: VaultItem }) {
     ["resy", "opentable", "tock"].includes(item.bookingPlatform || "");
   return (
     <Link
-      href={`/vault/${encodeURIComponent(item.placeId)}`}
+      href={vaultHref(item.placeId)}
       className="card-light card-interactive group fade-up overflow-hidden rounded-[var(--radius-xl)]"
     >
       <div className={cn("relative aspect-[4/3] bg-gradient-to-br", gradientFor(item.placeId))}>

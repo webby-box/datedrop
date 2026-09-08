@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { captureHref } from "@/lib/static-mode";
 
 type Capture = {
   _id: string;
@@ -116,7 +117,7 @@ export function InboxClient() {
               <p className="text-sm text-[#9a8f7e]">{c.extraction?.summary || c.source}</p>
               {c.error && <p className="text-sm text-[#b5523a]">{c.error}</p>}
             </div>
-            <Link href={`/captures/${c._id}`} className="text-sm text-[#d4a574]">
+            <Link href={captureHref(c._id)} className="text-sm text-[#d4a574]">
               Open →
             </Link>
           </li>

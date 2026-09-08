@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ArrowLeft, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useRouteId } from "@/lib/use-route-id";
+import { boardPlanHref } from "@/lib/static-mode";
 
 type Payload = {
   alert: {
@@ -27,7 +29,8 @@ type Payload = {
   screenshot?: string;
 };
 
-export function LogisticsClient({ id }: { id: string }) {
+export function LogisticsClient({ id: paramId }: { id: string }) {
+  const id = useRouteId(paramId);
   const [data, setData] = useState<Payload | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -137,7 +140,7 @@ export function LogisticsClient({ id }: { id: string }) {
           </a>
         )}
         {data.board && (
-          <Link href={`/boards/${data.board._id}/plan`} className="inline-flex h-12 flex-1 items-center justify-center rounded-full border border-[var(--line-strong)] text-sm">
+          <Link href={boardPlanHref(data.board._id)} className="inline-flex h-12 flex-1 items-center justify-center rounded-full border border-[var(--line-strong)] text-sm">
             Draft plan
           </Link>
         )}

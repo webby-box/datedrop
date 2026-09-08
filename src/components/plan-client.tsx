@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useRouteId } from "@/lib/use-route-id";
 
 type Plan = {
   dates: { start: string; end: string };
@@ -21,7 +22,8 @@ type Plan = {
 
 type ChecklistItem = { name: string; url: string; label: string; copy: string };
 
-export function PlanClient({ id }: { id: string }) {
+export function PlanClient({ id: paramId }: { id: string }) {
+  const id = useRouteId(paramId);
   const [plan, setPlan] = useState<Plan | null>(null);
   const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
   const [attr, setAttr] = useState<string>("");

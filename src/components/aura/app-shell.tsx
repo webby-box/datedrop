@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import {
   Compass,
   LayoutGrid,
@@ -14,6 +15,8 @@ import {
 } from "lucide-react";
 import { AuraBrand } from "./brand";
 import { cn } from "@/lib/utils";
+import { isStaticApp, homeAssignPath } from "@/lib/static-mode";
+import { isStaticDemo, setStaticDemo } from "@/lib/static-store";
 
 const NAV = [
   { href: "/", label: "Explore", icon: Compass },
@@ -32,6 +35,10 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [demo, setDemo] = useState(false);
+  useEffect(() => {
+    if (isStaticApp) setDemo(isStaticDemo());
+  }, [session]);
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
@@ -85,10 +92,13 @@ export function AppShell({
             >
               <MessageCircle className="h-5 w-5" />
             </Link>
-            {session?.user ? (
+            {session?.user || demo ? (
               <button
                 type="button"
-                onClick={() => void signOut({ callbackUrl: "/" })}
+                onClick={() => {
+                  if (isStaticApp) setStaticDemo(false);
+                  void signOut({ callbackUrl: homeAssignPath() });
+                }}
                 className="focus-ring hidden h-11 items-center gap-2 rounded-full border border-white/15 px-3.5 text-xs text-[#f7f2e9]/75 transition hover:border-[var(--gold)]/40 hover:text-[#f7f2e9] md:inline-flex"
               >
                 <LogOut className="h-3.5 w-3.5" />

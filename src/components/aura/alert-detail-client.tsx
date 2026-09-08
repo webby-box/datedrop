@@ -6,6 +6,8 @@ import { AppShell } from "./app-shell";
 import { Skeleton } from "./skeleton";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ExternalLink } from "lucide-react";
+import { useRouteId } from "@/lib/use-route-id";
+import { vaultHref, planHref } from "@/lib/static-mode";
 
 type Payload = {
   alert: {
@@ -26,7 +28,8 @@ type Payload = {
   screenshot?: string;
 };
 
-export function AlertDetailClient({ id }: { id: string }) {
+export function AlertDetailClient({ id: paramId }: { id: string }) {
+  const id = useRouteId(paramId);
   const [data, setData] = useState<Payload | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -115,12 +118,12 @@ export function AlertDetailClient({ id }: { id: string }) {
                 ) : null}
                 {data.place?.id ? (
                   <Button variant="outline" asChild>
-                    <Link href={`/vault/${encodeURIComponent(data.place.id)}`}>View in vault</Link>
+                    <Link href={vaultHref(data.place.id)}>View in vault</Link>
                   </Button>
                 ) : null}
                 {data.board?._id ? (
                   <Button variant="outline" asChild>
-                    <Link href={`/plans/${data.board._id}`}>View plan</Link>
+                    <Link href={planHref(data.board._id)}>View plan</Link>
                   </Button>
                 ) : null}
               </div>

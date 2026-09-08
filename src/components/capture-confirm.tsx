@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { OccasionChips } from "@/components/aura/occasion-chips";
+import { useRouteId } from "@/lib/use-route-id";
+import { vaultHref } from "@/lib/static-mode";
 
 type Match = {
   externalPlaceId?: string;
@@ -41,7 +43,8 @@ function mid(m: Match) {
   return m.externalPlaceId || m.googlePlaceId || m.name;
 }
 
-export function CaptureConfirm({ id }: { id: string }) {
+export function CaptureConfirm({ id: paramId }: { id: string }) {
+  const id = useRouteId(paramId);
   const router = useRouter();
   const [cap, setCap] = useState<Capture | null>(null);
   const [q, setQ] = useState("");
@@ -78,7 +81,7 @@ export function CaptureConfirm({ id }: { id: string }) {
     }
     if (json.placeId) {
       toast.success("Saved to The Vault");
-      router.push(`/vault/${encodeURIComponent(json.placeId)}`);
+      router.push(vaultHref(json.placeId));
       return json;
     }
     if (json.boardId) {

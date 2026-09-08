@@ -17,7 +17,8 @@ playwright-report
 blob-report
 playwright/.cache
 
-.open-next
+.pages-api-bak
+.pages-proxy-bak.ts
 .wrangler
 .dev.vars
 cloudflare-env.d.ts
