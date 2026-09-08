@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Falerts\u002F[id]","\u002Fboards\u002F[id]","\u002Fboards\u002F[id]\u002Fplan","\u002Fcaptures\u002F[id]","\u002Fplaces\u002F[id]","\u002Fplans\u002F[id]","\u002Fvault\u002F[id]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
