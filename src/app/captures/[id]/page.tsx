@@ -7,8 +7,6 @@ export function generateStaticParams() {
   return STATIC_ID_PARAMS;
 }
 
-export const dynamicParams = true;
-
 export default async function CapturePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   return (
